@@ -24,7 +24,13 @@
 
     <section class="view view-spinning">
       <h1>Spinning…</h1>
-      <p class="wheel" id="wheel">—</p>
+      <div class="wheel-wrap">
+        <div class="wheel-pointer"></div>
+        <svg class="wheel-svg" id="wheel-svg" viewBox="0 0 100 100" aria-hidden="true">
+          <defs id="wheel-defs"></defs>
+          <g id="wheel-rotor"></g>
+        </svg>
+      </div>
     </section>
 
     <section class="view view-result">

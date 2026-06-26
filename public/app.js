@@ -1,5 +1,6 @@
 import { pick, pickPerson } from './selection.js';
 import { dueSpin } from './scheduler.js';
+import { wedgeAngles, rotationFor } from './wheel-geometry.js';
 
 const TEST = new URLSearchParams(location.search).has('test');
 const DEMO_ROSTER = [
@@ -8,11 +9,17 @@ const DEMO_ROSTER = [
   { id: 'demo3', name: 'Demo Cleo' },
 ];
 
+const WHEEL_COLORS = ['#ffd23f', '#ff6b6b', '#4ecdc4', '#a06bff'];
+const LABEL_HIDE_THRESHOLD = 12; // above this many people, show avatars only
+const SPIN_SECONDS_DEFAULT = 5;
+const SPIN_TURNS_DEFAULT = 5;
+
 const els = {
   state: document.getElementById('state'),
   clock: document.getElementById('clock'),
   countdown: document.getElementById('countdown'),
-  wheel: document.getElementById('wheel'),
+  wheelDefs: document.getElementById('wheel-defs'),
+  wheelRotor: document.getElementById('wheel-rotor'),
   resultActivity: document.getElementById('result-activity'),
   resultDesc: document.getElementById('result-desc'),
   resultName: document.getElementById('result-name'),
@@ -25,7 +32,7 @@ const els = {
 
 let config;
 let activities;
-let round = null; // { activity, present, excluded:Set, current, spinKey }
+let round = null; // { activity, present, excluded:Set, current, spinKey, rotation }
 
 const setState = (name) => { els.state.dataset.state = name; };
 
@@ -61,22 +68,117 @@ function updateClock() {
   }).format(new Date());
 }
 
-function animateWheel(present, winner) {
-  setState('spinning');
+// ---- wheel rendering ------------------------------------------------------
+
+function firstName(name) {
+  return String(name || '').trim().split(/\s+/)[0] || '?';
+}
+function initialsOf(name) {
+  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '?';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+function escapeXml(s) {
+  return String(s).replace(/[<>&"']/g, (c) => (
+    { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' }[c]
+  ));
+}
+// wheel angle (deg, clockwise from top) -> point on a circle of radius r about (50,50)
+function polar(angleDeg, r) {
+  const a = (angleDeg * Math.PI) / 180;
+  return { x: 50 + r * Math.sin(a), y: 50 - r * Math.cos(a) };
+}
+
+function renderWheel(present) {
+  const n = present.length;
+  const R = 48;                              // wheel radius in the 100x100 viewBox
+  const angles = wedgeAngles(n);
+  const avatarR = Math.min(9, 75 / n);       // shrink avatars as the wheel fills
+  const rAvatar = 30;                        // avatar centre distance from middle
+  const rName = 16;                          // name distance from middle
+  const showNames = n <= LABEL_HIDE_THRESHOLD;
+  const nameFont = Math.max(2.4, 6 - n * 0.18);
+
+  const defs = [];
+  const wedges = [];
+
+  present.forEach((p, i) => {
+    const color = WHEEL_COLORS[i % WHEEL_COLORS.length];
+    const { start, end, mid } = angles[i];
+
+    let shape;
+    if (n === 1) {
+      shape = `<circle cx="50" cy="50" r="${R}" fill="${color}" />`;
+    } else {
+      const a = polar(start, R);
+      const b = polar(end, R);
+      const largeArc = end - start > 180 ? 1 : 0;
+      shape = `<path d="M50 50 L ${a.x.toFixed(3)} ${a.y.toFixed(3)} `
+        + `A ${R} ${R} 0 ${largeArc} 1 ${b.x.toFixed(3)} ${b.y.toFixed(3)} Z" fill="${color}" />`;
+    }
+
+    const clipId = `wedge-clip-${i}`;
+    defs.push(`<clipPath id="${clipId}"><circle cx="50" cy="${50 - rAvatar}" r="${avatarR.toFixed(3)}" /></clipPath>`);
+
+    const avatarImg = p.avatar
+      ? `<image class="wedge-avatar" href="${escapeXml(p.avatar)}" `
+        + `x="${(50 - avatarR).toFixed(3)}" y="${(50 - rAvatar - avatarR).toFixed(3)}" `
+        + `width="${(avatarR * 2).toFixed(3)}" height="${(avatarR * 2).toFixed(3)}" `
+        + `clip-path="url(#${clipId})" preserveAspectRatio="xMidYMid slice" />`
+      : '';
+    const nameText = showNames
+      ? `<text class="wedge-name" x="50" y="${50 - rName}" text-anchor="middle" `
+        + `dominant-baseline="middle" font-size="${nameFont.toFixed(2)}">${escapeXml(firstName(p.name))}</text>`
+      : '';
+
+    wedges.push(
+      `<g class="wedge" data-id="${escapeXml(p.id)}">`
+        + shape
+        + `<g transform="rotate(${mid.toFixed(3)} 50 50)">`
+          + `<circle cx="50" cy="${50 - rAvatar}" r="${avatarR.toFixed(3)}" fill="rgba(0,0,0,0.18)" />`
+          + `<text class="wedge-initials" x="50" y="${50 - rAvatar}" text-anchor="middle" `
+            + `dominant-baseline="middle" font-size="${(avatarR * 0.9).toFixed(2)}">${escapeXml(initialsOf(p.name))}</text>`
+          + avatarImg
+          + nameText
+        + `</g>`
+      + `</g>`,
+    );
+  });
+
+  els.wheelDefs.innerHTML = defs.join('');
+  els.wheelRotor.innerHTML = wedges.join('');
+
+  // reset orientation instantly (no animation) at the start of each round
+  els.wheelRotor.style.transition = 'none';
+  els.wheelRotor.style.transform = 'rotate(0deg)';
+  round.rotation = 0;
+
+  // a broken avatar image reveals the initials drawn underneath it
+  els.wheelRotor.querySelectorAll('image.wedge-avatar').forEach((img) => {
+    img.addEventListener('error', () => { img.style.display = 'none'; }, { once: true });
+  });
+}
+
+function spinTo(winner) {
+  const n = round.present.length;
+  const idx = round.present.findIndex((p) => p.id === winner.id);
+  const turns = config.spinTurns || SPIN_TURNS_DEFAULT;
+  const secs = config.spinSeconds || SPIN_SECONDS_DEFAULT;
+  const target = rotationFor(idx, n, round.rotation, turns);
+  round.rotation = target;
+
+  const rotor = els.wheelRotor;
   return new Promise((resolve) => {
-    const names = present.map((p) => p.name);
-    let i = 0;
-    let ticks = 0;
-    const total = 24 + Math.max(0, present.indexOf(winner));
-    const iv = setInterval(() => {
-      els.wheel.textContent = names[i % names.length];
-      i += 1; ticks += 1;
-      if (ticks >= total) {
-        clearInterval(iv);
-        els.wheel.textContent = winner.name;
-        resolve();
-      }
-    }, 90);
+    const done = (e) => {
+      if (e.target !== rotor) return; // ignore any bubbling child transitions
+      rotor.removeEventListener('transitionend', done);
+      resolve();
+    };
+    rotor.addEventListener('transitionend', done);
+    rotor.getBoundingClientRect(); // flush the reset transform before transitioning
+    rotor.style.transition = `transform ${secs}s cubic-bezier(0.16, 1, 0.16, 1)`;
+    rotor.style.transform = `rotate(${target}deg)`;
   });
 }
 
@@ -115,21 +217,27 @@ async function startSpin(spinKey) {
   }
 
   const { person, activity } = pick(present, activities, getLastActivity(), []);
-  round = { activity, present, excluded: new Set(), current: person, spinKey };
-  await animateWheel(present, person);
+  round = { activity, present, excluded: new Set(), current: person, spinKey, rotation: 0 };
+  setState('spinning');
+  renderWheel(present);
+  await spinTo(person);
   showResult(person, activity);
 }
 
 els.skip.addEventListener('click', async () => {
   if (!round || !round.current) return;
   round.excluded.add(round.current.id);
+  const wedge = els.wheelRotor.querySelector(`[data-id="${round.current.id}"]`);
+  if (wedge) wedge.classList.add('dimmed');
+
   const next = pickPerson(round.present, [...round.excluded]);
   if (!next) {
     endRound("Everyone's busy right now 😅 — catch you at the next one!", round.spinKey);
     return;
   }
   round.current = next;
-  await animateWheel(round.present, next);
+  setState('spinning');
+  await spinTo(next);
   showResult(next, round.activity);
 });
 
