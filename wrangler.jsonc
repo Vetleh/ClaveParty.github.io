@@ -7,13 +7,13 @@
     "binding": "ASSETS"
   },
   "kv_namespaces": [
-    { "binding": "KV", "id": "<YOUR_KV_NAMESPACE_ID>" }
+    { "binding": "KV", "id": "08366cf89a184b64b65f194f9cfa8b4f" }
   ],
   "triggers": {
     "crons": ["0 7 * * 1-5"]
   },
   "vars": {
-    "SLACK_CHANNEL": "C0XXXXXXX",
+    "SLACK_CHANNEL": "C0BDHPPV36Y",
     "CHECKIN_EMOJI": "white_check_mark",
     "CHECKIN_MESSAGE": "☀️ Good morning! React with ✅ if you're in the office today.",
     "TIMEZONE": "Europe/Oslo"
