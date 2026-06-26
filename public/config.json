@@ -4,5 +4,7 @@
   "countdownSeconds": 5,
   "graceMinutes": 15,
   "soundFile": "/assets/announce.mp3",
-  "pollSeconds": 20
+  "pollSeconds": 20,
+  "spinSeconds": 5,
+  "spinTurns": 5
 }
