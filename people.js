@@ -18,21 +18,27 @@
 
 export const people = [
   {
+    id: 'lars',
+    name: 'Lars Holter',
+    slackId: 'U07G31QQ8KY',
+    match: { hostnames: ['Lars-sin-MacBook-Pro*'], macs: [] },
+  },
+  {
     id: 'karine',
     name: 'Karine',
-    slackId: '', // TODO: fill in Slack user id (U…) to link with her ✅ check-in
+    slackId: 'U0PMKFVHA', // TODO: fill in Slack user id (U…) to link with her ✅ check-in
     match: { hostnames: ['Karine-sin-MBP*'], macs: [] }, // observed in scan
   },
   {
     id: 'vetle',
     name: 'Vetle',
-    slackId: '',
+    slackId: 'U03LPQAHEU9',
     match: { hostnames: ['Vetles-MacBook*', 'Vetles-MBP*'], macs: [] }, // observed in scan
   },
   {
     id: 'per-kristian',
     name: 'Per-Kristian',
-    slackId: '',
+    slackId: 'U0HLG9KBN',
     // GUESS: "PERHEL-LAPTOP" / "PERHEL-OFFICE" appeared in the scan and look like
     // Per's machines — confirm and adjust/remove if that's someone else.
     match: { hostnames: ['PERHEL-*'], macs: [] },
@@ -40,7 +46,7 @@ export const people = [
   {
     id: 'ingrid-marie',
     name: 'Ingrid Marie',
-    slackId: '',
+    slackId: 'U03M0SZ0JRE',
     // TODO: no obvious device in the scan yet. Run `./lanscan.sh`, find her
     // laptop/phone hostname, and add it here (e.g. 'Ingrid-sin-MBP*').
     match: { hostnames: [], macs: [] },
@@ -48,9 +54,9 @@ export const people = [
   {
     id: 'marte',
     name: 'Marte Hanto Kolstad',
-    slackId: '',
+    slackId: 'U0BA4T8G0EB',
     // TODO: add Marte's device hostname once identified (see lanscan output).
-    match: { hostnames: [], macs: [] },
+    match: { hostnames: ['Karines-MacBook-Pro'], macs: [] },
   },
 ];
 
