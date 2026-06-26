@@ -16,6 +16,12 @@
     "SLACK_CHANNEL": "C0XXXXXXX",
     "CHECKIN_EMOJI": "white_check_mark",
     "CHECKIN_MESSAGE": "☀️ Good morning! React with ✅ if you're in the office today.",
-    "TIMEZONE": "Europe/Oslo"
+    "TIMEZONE": "Europe/Oslo",
+    // Network scans older than this are ignored, so a stopped agent quietly
+    // falls back to Slack-only presence instead of showing stale people.
+    "NETWORK_PRESENCE_TTL_MINUTES": "20"
   }
+  // Secrets (set via `npx wrangler secret put <NAME>`, never committed):
+  //   SLACK_BOT_TOKEN      — Slack bot token (xoxb-…)
+  //   NETWORK_AGENT_TOKEN  — shared bearer the on-site agent uses for /api/network-presence
 }
