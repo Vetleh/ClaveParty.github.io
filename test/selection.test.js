@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { pick, pickPerson, pickActivity } from '../public/selection.js';
 
 const people = [{ id: 'a', name: 'A' }, { id: 'b', name: 'B' }, { id: 'c', name: 'C' }];
-const acts = [{ title: 'X' }, { title: 'Y' }];
+const acts = [{ id: 'x1' }, { id: 'y1' }];
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -20,12 +20,12 @@ describe('pickPerson', () => {
 });
 
 describe('pickActivity', () => {
-  it('avoids repeating the last activity when alternatives exist', () => {
+  it('avoids repeating the last activity (by id) when alternatives exist', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0);
-    expect(pickActivity(acts, { title: 'X' })).toEqual({ title: 'Y' });
+    expect(pickActivity(acts, { id: 'x1' })).toEqual({ id: 'y1' });
   });
   it('allows a repeat when only one activity exists', () => {
-    expect(pickActivity([{ title: 'X' }], { title: 'X' })).toEqual({ title: 'X' });
+    expect(pickActivity([{ id: 'x1' }], { id: 'x1' })).toEqual({ id: 'x1' });
   });
   it('returns null for an empty activity list', () => {
     expect(pickActivity([], null)).toBeNull();
@@ -37,6 +37,6 @@ describe('pick', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0);
     const r = pick(people, acts, null, []);
     expect(r.person).toEqual({ id: 'a', name: 'A' });
-    expect(r.activity).toEqual({ title: 'X' });
+    expect(r.activity).toEqual({ id: 'x1' });
   });
 });

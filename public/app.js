@@ -39,8 +39,8 @@ function markRan(key) {
   if (!keys.includes(key)) { keys.push(key); localStorage.setItem('ranKeys', JSON.stringify(keys)); }
 }
 function getLastActivity() {
-  const t = localStorage.getItem('lastActivity');
-  return t ? { title: t } : null;
+  const id = localStorage.getItem('lastActivity');
+  return id ? { id } : null;
 }
 
 async function fetchPresent() {
@@ -81,8 +81,8 @@ function animateWheel(present, winner) {
 }
 
 function showResult(person, activity) {
-  els.resultActivity.textContent = activity.title;
-  els.resultDesc.textContent = activity.description || '';
+  els.resultActivity.textContent = activity.kategori;
+  els.resultDesc.textContent = activity.tekst || '';
   els.resultName.textContent = person.name;
   setState('result');
 }
@@ -135,7 +135,7 @@ els.skip.addEventListener('click', async () => {
 
 els.accept.addEventListener('click', () => {
   if (round) {
-    localStorage.setItem('lastActivity', round.activity.title);
+    localStorage.setItem('lastActivity', round.activity.id);
     markRan(round.spinKey);
     round = null;
   }
@@ -151,7 +151,7 @@ function tick() {
 
 async function main() {
   config = await (await fetch('/config.json')).json();
-  activities = (await (await fetch('/activities.json')).json()).activities;
+  activities = (await (await fetch('/activities.json')).json()).aktiviteter;
   els.sound.src = config.soundFile;
   setState('idle');
   updateClock();

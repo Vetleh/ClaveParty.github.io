@@ -5,12 +5,20 @@ const read = (p) => JSON.parse(readFileSync(new URL(p, import.meta.url)));
 
 describe('activities.json', () => {
   const data = read('../public/activities.json');
-  it('has a non-empty activities array', () => {
-    expect(Array.isArray(data.activities)).toBe(true);
-    expect(data.activities.length).toBeGreaterThan(0);
+  it('has a non-empty aktiviteter array', () => {
+    expect(Array.isArray(data.aktiviteter)).toBe(true);
+    expect(data.aktiviteter.length).toBeGreaterThan(0);
   });
-  it('gives every activity a string title', () => {
-    for (const a of data.activities) expect(typeof a.title).toBe('string');
+  it('gives every activity a string id, kategori, and tekst', () => {
+    for (const a of data.aktiviteter) {
+      expect(typeof a.id).toBe('string');
+      expect(typeof a.kategori).toBe('string');
+      expect(typeof a.tekst).toBe('string');
+    }
+  });
+  it('has unique ids (so the avoid-repeat dedupe works)', () => {
+    const ids = data.aktiviteter.map((a) => a.id);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 });
 

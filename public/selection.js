@@ -9,7 +9,7 @@ export function pickPerson(present, excluded = []) {
 export function pickActivity(activities, lastActivity = null) {
   if (activities.length === 0) return null;
   if (lastActivity && activities.length > 1) {
-    const pool = activities.filter((a) => a.title !== lastActivity.title);
+    const pool = activities.filter((a) => a.id !== lastActivity.id);
     return pool[Math.floor(Math.random() * pool.length)];
   }
   return activities[Math.floor(Math.random() * activities.length)];

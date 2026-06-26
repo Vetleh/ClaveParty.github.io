@@ -1,9 +1,205 @@
 {
-  "activities": [
-    { "title": "Coffee run ☕", "description": "Take everyone's orders and brew a fresh pot." },
-    { "title": "2-minute stretch 🧘", "description": "Lead a quick desk-stretch for the team." },
-    { "title": "Show & tell 🎤", "description": "Share something you're working on for 5 minutes." },
-    { "title": "Snack restock 🍎", "description": "Refill the snack shelf or fruit bowl." },
-    { "title": "Plant check 🪴", "description": "Water the office plants." }
+  "beskrivelse": "Aktiviteter for kontor-tjenesten. Person plukkes tilfeldig blant de som har meldt seg 'jeg er her' i Slack. Den utvalgte samler gjengen.",
+  "felt": {
+    "id": "unik id",
+    "kategori": "gruppering",
+    "tekst": "det som vises på skjermen",
+    "vanskelighet": "lett = gjør det med en gang | medium = krever litt arrangering",
+    "sesong": "hele_aret | sommer",
+    "ute": "true hvis aktiviteten krever å gå ut"
+  },
+  "aktiviteter": [
+    {
+      "id": "mat-01",
+      "kategori": "Mat & drikke",
+      "tekst": "Ta med gjengen ut og spis is. Tak hvis været tillater det.",
+      "vanskelighet": "medium",
+      "sesong": "sommer",
+      "ute": true
+    },
+    {
+      "id": "mat-02",
+      "kategori": "Mat & drikke",
+      "tekst": "Sett over en kanne kaffe eller te og rop 'kaffepause!'. Alle som vil får ti minutter.",
+      "vanskelighet": "lett",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "mat-03",
+      "kategori": "Mat & drikke",
+      "tekst": "Del ut frukt til alle du møter på veien til kjøkkenet.",
+      "vanskelighet": "lett",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "mat-04",
+      "kategori": "Mat & drikke",
+      "tekst": "Bestem dagens kjeks. Du har vetorett. Hent en pakke til fellesarealet.",
+      "vanskelighet": "lett",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "mat-05",
+      "kategori": "Mat & drikke",
+      "tekst": "Arranger en spontan smakstest: to typer snacks, la folk stemme.",
+      "vanskelighet": "medium",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "prat-01",
+      "kategori": "Små spørsmål & prat",
+      "tekst": "Still gjengen i ring og still dagens spørsmål.",
+      "vanskelighet": "lett",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "prat-02",
+      "kategori": "Små spørsmål & prat",
+      "tekst": "Gå rundt og spør tre personer om det beste de har spist denne uka.",
+      "vanskelighet": "lett",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "prat-03",
+      "kategori": "Små spørsmål & prat",
+      "tekst": "Finn ut hvem som har reist lengst for å komme på jobb i dag.",
+      "vanskelighet": "lett",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "prat-04",
+      "kategori": "Små spørsmål & prat",
+      "tekst": "Spør tre kolleger hva de hører på akkurat nå, og lag en felles spilleliste.",
+      "vanskelighet": "medium",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "beveg-01",
+      "kategori": "Bevegelse & frisk luft",
+      "tekst": "Ta med deg minst to personer på en runde rundt kvartalet.",
+      "vanskelighet": "lett",
+      "sesong": "hele_aret",
+      "ute": true
+    },
+    {
+      "id": "beveg-02",
+      "kategori": "Bevegelse & frisk luft",
+      "tekst": "Led et 60-sekunders strekk ved pultene. Du bestemmer øvelsene.",
+      "vanskelighet": "lett",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "beveg-03",
+      "kategori": "Bevegelse & frisk luft",
+      "tekst": "Arranger en luftegåtur. Den som blir med får velge rute neste gang.",
+      "vanskelighet": "lett",
+      "sesong": "hele_aret",
+      "ute": true
+    },
+    {
+      "id": "lek-01",
+      "kategori": "Lek & lavterskel konkurranse",
+      "tekst": "Start en kort runde med et bordspill eller kortstokk i pausen.",
+      "vanskelighet": "medium",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "lek-02",
+      "kategori": "Lek & lavterskel konkurranse",
+      "tekst": "Utfordre én kollega til en duell du selv velger: stein-saks-papir, gjett-låta eller papirflykast.",
+      "vanskelighet": "lett",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "lek-03",
+      "kategori": "Lek & lavterskel konkurranse",
+      "tekst": "Arranger en 5-minutters quiz med tre spørsmål du finner på selv.",
+      "vanskelighet": "medium",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "lek-04",
+      "kategori": "Lek & lavterskel konkurranse",
+      "tekst": "Hold en mini-gjettelek: 'hva er i lomma mi eller på pulten min'.",
+      "vanskelighet": "lett",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "kos-01",
+      "kategori": "Koselig & uventet",
+      "tekst": "Gi en ærlig kompliment til tre kolleger.",
+      "vanskelighet": "lett",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "kos-02",
+      "kategori": "Koselig & uventet",
+      "tekst": "Tegn dagens stemning på tavla og be folk legge til sin egen strek.",
+      "vanskelighet": "lett",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "kos-03",
+      "kategori": "Koselig & uventet",
+      "tekst": "Velg dagens låt og spill den på fellesanlegget. Hold den kontorvennlig.",
+      "vanskelighet": "lett",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "kos-04",
+      "kategori": "Koselig & uventet",
+      "tekst": "Sett deg ved siden av noen du sjelden snakker med og spør hva de jobber med.",
+      "vanskelighet": "lett",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "kos-05",
+      "kategori": "Koselig & uventet",
+      "tekst": "Fortell gjengen om en liten ting du gleder deg til denne uka.",
+      "vanskelighet": "lett",
+      "sesong": "hele_aret",
+      "ute": false
+    },
+    {
+      "id": "sommer-01",
+      "kategori": "Sommerspesial",
+      "tekst": "Ta med gjengen ut i sola i ti minutter. Pålegg: ikke snakk om jobb.",
+      "vanskelighet": "lett",
+      "sesong": "sommer",
+      "ute": true
+    },
+    {
+      "id": "sommer-02",
+      "kategori": "Sommerspesial",
+      "tekst": "Sjekk badetemperaturen og foreslå afterwork-bad for de som er med.",
+      "vanskelighet": "medium",
+      "sesong": "sommer",
+      "ute": false
+    },
+    {
+      "id": "sommer-03",
+      "kategori": "Sommerspesial",
+      "tekst": "Grill-sjekk: er det grillvær? Planlegg spontan grilling med dem som vil.",
+      "vanskelighet": "medium",
+      "sesong": "sommer",
+      "ute": false
+    }
   ]
 }
