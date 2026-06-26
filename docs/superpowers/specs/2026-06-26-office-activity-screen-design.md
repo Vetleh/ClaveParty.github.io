@@ -71,7 +71,10 @@ auto-deploys. Reachable on a `*.workers.dev` URL or a custom domain.
 | Cron handler | Posts the Slack check-in message each morning; stores message `ts` + channel in KV. | Worker `scheduled()` |
 | `GET /api/present` | Reads reactions on today's message via Slack; returns present people. | Worker `fetch()` |
 | KV namespace | `checkin:<YYYY-MM-DD>` → `{channel, ts}`; `user:<id>` → `{name, avatar}` cache. | Cloudflare KV |
-| Slack app | Bot token with `chat:write`, `reactions:read`, `channels:history`; bot is a channel member. | Slack |
+| Slack app | Bot token with `chat:write`, `reactions:read`, `channels:history`, `users:read`; bot is a channel member. | Slack |
+| Network agent | On-site script that scans the office LAN and POSTs the device list to the Worker (the Worker can't reach the LAN). | `agent/scan-and-report.sh` |
+| `people.js` | Roster mapping device hostnames/MACs → people; imported by the Worker, not served. | Repo |
+| `POST /api/network-presence` | Agent ingest (bearer-auth); stores latest scan in KV with a short TTL. | Worker `fetch()` |
 
 ## Data Flow — A Day in the Life
 
@@ -151,8 +154,35 @@ pick(present, activities, lastActivity, excluded):
 ### `GET /api/present` response
 
 ```json
-{ "present": [ { "id": "U01", "name": "Alice", "avatar": "https://..." } ] }
+{ "present": [ { "id": "U01", "name": "Alice", "avatar": "https://...", "sources": ["slack"] } ] }
 ```
+
+`sources` is `["slack"]`, `["network"]`, or both. If Slack fails but network presence
+is available, the response is still `200` with an added `"warning"` field; only an empty
+result from a Slack failure returns `502`.
+
+## Network Presence (added after initial approval)
+
+Presence has two sources, unioned by `/api/present`:
+
+1. **Slack** — ✅ reactions (above).
+2. **Network** — devices seen on the office LAN, mapped to people.
+
+**Why an agent:** the Worker runs in Cloudflare and cannot reach the office LAN, so a
+small script (`agent/scan-and-report.sh`) on an always-on on-site machine ping-sweeps the
+`/24`, resolves each device's reverse-DNS + mDNS hostname, and POSTs `[{ip, mac, hostname}]`
+to `POST /api/network-presence` (bearer-auth via the `NETWORK_AGENT_TOKEN` secret). The
+Worker stores the scan in KV under `netpresence:current` with a TTL of
+`NETWORK_PRESENCE_TTL_MINUTES` (default 20); a stopped agent therefore decays to
+Slack-only presence rather than showing stale people.
+
+**Matching (rotation-proof):** modern phones/laptops randomize their Wi-Fi MAC, so MAC is
+not a stable identity. The mDNS/Bonjour **hostname** *is* stable, so `people.js` matches
+on hostname patterns first (case-insensitive, `*` wildcard), with an optional exact-MAC
+fallback for gear that never randomizes (printers, TVs, APs). A person's `slackId` links
+their two presence sources into one entry. Matching is a pure function (`src/presence.js`),
+unit-tested independently of Slack and KV. Devices that match nobody are returned as an
+`unmatched` list to make extending the roster easy.
 
 ## Error Handling & Edge Cases
 

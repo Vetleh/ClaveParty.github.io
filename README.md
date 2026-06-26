@@ -1,7 +1,9 @@
 # Clave Party — Office Activity Wheel
 
 An always-on office screen that twice a day picks a random activity and a present
-employee to do it. Presence = reacting with ✅ to the daily Slack check-in message.
+employee to do it. Presence comes from two sources, merged:
+1. **Slack** — reacting with ✅ to the daily check-in message.
+2. **Network** — being on the office Wi-Fi (your laptop/phone is seen on the LAN).
 
 ## How it works
 - A Cloudflare Worker serves the screen and runs a daily cron that posts the Slack
@@ -36,5 +38,41 @@ Open the deployed URL in fullscreen/kiosk mode, kept in the foreground (backgrou
 throttle timers). Allow autoplay/sound for the site so the announcement plays.
 
 ## Slack app
-Scopes: `chat:write`, `reactions:read`, `channels:history`. Invite the bot to the
+Scopes: `chat:write`, `reactions:read`, `channels:history`, `users:read` (needed to
+resolve reactor ids to names/avatars for `/api/present`). Invite the bot to the
 check-in channel.
+
+## Network presence (who's on the office Wi-Fi)
+`/api/present` also includes people detected on the office network, merged with the
+Slack reactions (a person known to both — linked via `slackId` in `people.js` — shows
+once, tagged with both sources).
+
+**Why a separate agent:** the Worker runs in Cloudflare's cloud and can't reach the
+office LAN. A small script on an always-on on-site machine (the office screen is ideal)
+scans the network and POSTs the device list to the Worker, which maps devices → people.
+
+**Map who you know — edit `people.js`** (imported by the Worker, never served to the
+browser). Match on the device's **mDNS/Bonjour hostname**, which is *stable even though
+Wi-Fi MAC addresses randomize* (`Karine-sin-MBP`, `Vetles-MacBook`, …). `match.macs` is
+an optional fallback for gear that never randomizes (printers, TVs, APs). Set `slackId`
+to dedupe a person across both presence sources. To discover hostnames, run
+`./lanscan.sh` or `DRY_RUN=1 ./agent/scan-and-report.sh` — the Worker also returns an
+`unmatched` list of named-but-unclaimed devices.
+
+> Caveat: iPhones often advertise the generic hostname `iPhone` (collides across people)
+> — don't map that. Android/Samsung phones embed the owner's name and are reliable.
+
+**Run the agent** on the on-site machine:
+```sh
+# set the Worker secret once:
+npx wrangler secret put NETWORK_AGENT_TOKEN
+
+# then run the agent (every 5 min):
+LOOP_SECONDS=300 \
+WORKER_URL=https://clave-party.<account>.workers.dev \
+NETWORK_AGENT_TOKEN=<same value as the secret> \
+  ./agent/scan-and-report.sh
+```
+Wire it to start on boot via `launchd` (macOS) / `cron` / a systemd timer. Scans older
+than `NETWORK_PRESENCE_TTL_MINUTES` (default 20) are ignored, so if the agent stops the
+screen falls back to Slack-only presence.
