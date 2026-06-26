@@ -1,0 +1,9 @@
+{
+  "activities": [
+    { "title": "Coffee run ☕", "description": "Take everyone's orders and brew a fresh pot." },
+    { "title": "2-minute stretch 🧘", "description": "Lead a quick desk-stretch for the team." },
+    { "title": "Show & tell 🎤", "description": "Share something you're working on for 5 minutes." },
+    { "title": "Snack restock 🍎", "description": "Refill the snack shelf or fruit bowl." },
+    { "title": "Plant check 🪴", "description": "Water the office plants." }
+  ]
+}
