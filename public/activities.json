@@ -58,22 +58,6 @@
       "ute": false
     },
     {
-      "id": "prat-02",
-      "kategori": "Små spørsmål & prat",
-      "tekst": "Gå rundt og spør tre personer om det beste de har spist denne uka.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
-    },
-    {
-      "id": "prat-03",
-      "kategori": "Små spørsmål & prat",
-      "tekst": "Finn ut hvem som har reist lengst for å komme på jobb i dag.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
-    },
-    {
       "id": "prat-04",
       "kategori": "Små spørsmål & prat",
       "tekst": "Spør tre kolleger hva de hører på akkurat nå, og lag en felles spilleliste.",
@@ -140,7 +124,7 @@
     {
       "id": "kos-01",
       "kategori": "Koselig & uventet",
-      "tekst": "Gi en ærlig kompliment til tre kolleger.",
+      "tekst": "Gi en ærlig kompliment til en kollega.",
       "vanskelighet": "lett",
       "sesong": "hele_aret",
       "ute": false
