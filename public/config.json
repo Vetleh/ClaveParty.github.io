@@ -1,7 +1,7 @@
 {
   "spinTimes": ["10:30", "14:30"],
   "timezone": "Europe/Oslo",
-  "countdownSeconds": 30,
+  "countdownSeconds": 5,
   "graceMinutes": 15,
   "soundFile": "/assets/announce.mp3",
   "pollSeconds": 20
