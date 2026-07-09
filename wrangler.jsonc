@@ -15,7 +15,7 @@
   "vars": {
     "SLACK_CHANNEL": "C0BDHPPV36Y",
     "CHECKIN_EMOJI": "white_check_mark",
-    "CHECKIN_MESSAGE": "☀️ Good morning! React with ✅ if you're in the office today.",
+    "CHECKIN_MESSAGE": "☀️ God morgen! Reager med ✅ hvis du er på kontoret i dag.",
     "TIMEZONE": "Europe/Oslo",
     // Network scans older than this are ignored, so a stopped agent quietly
     // falls back to Slack-only presence instead of showing stale people.

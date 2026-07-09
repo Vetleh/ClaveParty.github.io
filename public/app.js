@@ -1,5 +1,5 @@
 import { pick, pickPerson } from './selection.js';
-import { dueSpin } from './scheduler.js';
+import { dueSpin, nextSpin } from './scheduler.js';
 import { wedgeAngles, rotationFor } from './wheel-geometry.js';
 
 const TEST = new URLSearchParams(location.search).has('test');
@@ -16,7 +16,7 @@ const SPIN_TURNS_DEFAULT = 5;
 
 const els = {
   state: document.getElementById('state'),
-  clock: document.getElementById('clock'),
+  nextDraw: document.getElementById('next-draw'),
   countdown: document.getElementById('countdown'),
   wheelDefs: document.getElementById('wheel-defs'),
   wheelRotor: document.getElementById('wheel-rotor'),
@@ -62,10 +62,11 @@ async function fetchPresent() {
   }
 }
 
-function updateClock() {
-  els.clock.textContent = new Intl.DateTimeFormat('en-GB', {
-    timeZone: config.timezone, hour: '2-digit', minute: '2-digit', hour12: false,
-  }).format(new Date());
+function updateNextDraw() {
+  const { time, today } = nextSpin(
+    new Date(), config.spinTimes, ranKeys(), config.timezone, config.graceMinutes,
+  );
+  els.nextDraw.textContent = today ? `Neste trekning kl. ${time}` : `Neste trekning i morgen kl. ${time}`;
 }
 
 // ---- wheel rendering ------------------------------------------------------
@@ -198,6 +199,7 @@ function endRound(messageText, spinKey) {
 
 async function startSpin(spinKey) {
   setState('announcing');
+  els.sound.loop = true;
   els.sound.currentTime = 0;
   els.sound.play().catch(() => {}); // autoplay may be blocked; ignore
   let remaining = config.countdownSeconds;
@@ -209,10 +211,12 @@ async function startSpin(spinKey) {
       if (remaining <= 0) { clearInterval(iv); resolve(); }
     }, 1000);
   });
+  els.sound.loop = false;
+  els.sound.pause();
 
   const present = await fetchPresent();
   if (present.length === 0) {
-    endRound("No one's checked in yet — see you next time!", spinKey);
+    endRound('Ingen har sjekket inn ennå — vi sees neste gang!', spinKey);
     return;
   }
 
@@ -232,7 +236,7 @@ els.skip.addEventListener('click', async () => {
 
   const next = pickPerson(round.present, [...round.excluded]);
   if (!next) {
-    endRound("Everyone's busy right now 😅 — catch you at the next one!", round.spinKey);
+    endRound('Alle er opptatt akkurat nå 😅 — vi tar det neste gang!', round.spinKey);
     return;
   }
   round.current = next;
@@ -247,11 +251,12 @@ els.accept.addEventListener('click', () => {
     markRan(round.spinKey);
     round = null;
   }
+  updateNextDraw();
   setState('idle');
 });
 
 function tick() {
-  updateClock();
+  updateNextDraw();
   if (els.state.dataset.state !== 'idle') return; // a spin is in progress
   const key = dueSpin(new Date(), config.spinTimes, ranKeys(), config.timezone, config.graceMinutes);
   if (key) startSpin(key);
@@ -262,7 +267,7 @@ async function main() {
   activities = (await (await fetch('/activities.json')).json()).aktiviteter;
   els.sound.src = config.soundFile;
   setState('idle');
-  updateClock();
+  updateNextDraw();
   setInterval(tick, (config.pollSeconds || 20) * 1000);
 
   if (TEST) {
