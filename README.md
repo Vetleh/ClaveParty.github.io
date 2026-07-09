@@ -31,7 +31,9 @@ Edit `public/config.json`: `spinTimes`, `timezone`, `countdownSeconds`, `graceMi
 - `npm test` — run unit tests
 - `npm run dev` — local server at http://localhost:8787 (use `/?test=1` to force a spin
   with a demo roster, no Slack needed)
-- `npm run deploy` — deploy to Cloudflare
+- `npm run deploy` — deploy to Cloudflare manually
+- Pushes to `main` auto-deploy via GitHub Actions (`.github/workflows/deploy.yml`),
+  using the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repo secrets.
 
 ## Office screen setup
 Open the deployed URL in fullscreen/kiosk mode, kept in the foreground (background tabs
