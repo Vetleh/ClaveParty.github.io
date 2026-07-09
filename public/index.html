@@ -1,29 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="no">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Office Activity Wheel</title>
+  <title>Aktivitetshjulet</title>
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
   <main id="state" data-state="idle">
     <audio id="sound" preload="auto"></audio>
-    <button id="test-btn" hidden>Spin now (test)</button>
+    <button id="test-btn" hidden>Snurr nå (test)</button>
 
     <section class="view view-idle">
-      <h1>🎉 Today's Activity</h1>
-      <p class="clock" id="clock">--:--</p>
-      <p class="hint">Next spin coming up. Check in on Slack with ✅ to join!</p>
+      <h1>🎉 Dagens aktivitet</h1>
+      <p class="next-draw" id="next-draw">Neste trekning kl. --:--</p>
+      <p class="hint">Sjekk inn på Slack med ✅ for å bli med!</p>
     </section>
 
     <section class="view view-announcing">
-      <h1>Get ready…</h1>
+      <h1>Gjør dere klare…</h1>
       <p class="countdown" id="countdown">30</p>
     </section>
 
     <section class="view view-spinning">
-      <h1>Spinning…</h1>
+      <h1>Hjulet snurrer…</h1>
       <div class="wheel-wrap">
         <div class="wheel-pointer"></div>
         <svg class="wheel-svg" id="wheel-svg" viewBox="0 0 100 100" aria-hidden="true">
@@ -36,11 +36,11 @@
     <section class="view view-result">
       <p class="result-activity" id="result-activity"></p>
       <p class="result-desc" id="result-desc"></p>
-      <p class="result-label">is up to…</p>
+      <p class="result-label">går til…</p>
       <p class="result-name" id="result-name"></p>
       <div class="actions">
-        <button id="accept" class="btn-accept">I'm on it! ✅</button>
-        <button id="skip" class="btn-skip">Skip / can't right now ↻</button>
+        <button id="accept" class="btn-accept">Den tar jeg! ✅</button>
+        <button id="skip" class="btn-skip">Stå over / passer ikke nå ↻</button>
       </div>
     </section>
 

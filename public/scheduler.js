@@ -20,3 +20,18 @@ export function dueSpin(now, spinTimes, ranKeys, timeZone, graceMinutes = 15) {
   }
   return null;
 }
+
+// Returns the upcoming spin as { time: "HH:MM", today: boolean }: the earliest
+// scheduled time that has not run and whose grace window has not passed, or
+// the first time tomorrow once today's spins are spent.
+export function nextSpin(now, spinTimes, ranKeys, timeZone, graceMinutes = 15) {
+  const date = localDateISO(now, timeZone);
+  const nowMin = toMinutes(localTimeHHMM(now, timeZone));
+  const times = [...spinTimes].sort((a, b) => toMinutes(a) - toMinutes(b));
+  for (const t of times) {
+    if (nowMin <= toMinutes(t) + graceMinutes && !ranKeys.includes(`${date}T${t}`)) {
+      return { time: t, today: true };
+    }
+  }
+  return { time: times[0], today: false };
+}
