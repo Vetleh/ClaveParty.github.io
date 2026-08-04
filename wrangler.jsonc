@@ -10,7 +10,7 @@
     { "binding": "KV", "id": "08366cf89a184b64b65f194f9cfa8b4f" }
   ],
   "triggers": {
-    "crons": ["0 7 * * 1-5"]
+    "crons": ["0 7 * * 2-6"]
   },
   "vars": {
     "SLACK_CHANNEL": "C0BDHPPV36Y",
