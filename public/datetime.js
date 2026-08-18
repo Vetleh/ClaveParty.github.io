@@ -11,6 +11,13 @@ export function localDateISO(now, timeZone) {
   }).format(now);
 }
 
+export function localMonth(now, timeZone) {
+  // 1-12 for the given timezone (e.g. late-June UTC can already be July locally).
+  return Number(
+    new Intl.DateTimeFormat('en-US', { timeZone, month: 'numeric' }).format(now),
+  );
+}
+
 export function localTimeHHMM(now, timeZone) {
   const s = new Intl.DateTimeFormat('en-GB', {
     timeZone,

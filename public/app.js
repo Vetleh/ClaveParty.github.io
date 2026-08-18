@@ -1,5 +1,6 @@
-import { pick, pickPerson } from './selection.js';
+import { pick, pickPerson, seasonalActivities } from './selection.js';
 import { dueSpin, nextSpin } from './scheduler.js';
+import { localMonth } from './datetime.js';
 import { wedgeAngles, rotationFor } from './wheel-geometry.js';
 
 const TEST = new URLSearchParams(location.search).has('test');
@@ -220,7 +221,8 @@ async function startSpin(spinKey) {
     return;
   }
 
-  const { person, activity } = pick(present, activities, getLastActivity(), []);
+  const pool = seasonalActivities(activities, localMonth(new Date(), config.timezone));
+  const { person, activity } = pick(present, pool, getLastActivity(), []);
   round = { activity, present, excluded: new Set(), current: person, spinKey, rotation: 0 };
   setState('spinning');
   renderWheel(present);
