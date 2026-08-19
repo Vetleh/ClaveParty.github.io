@@ -19,7 +19,11 @@
     "TIMEZONE": "Europe/Oslo",
     // Network scans older than this are ignored, so a stopped agent quietly
     // falls back to Slack-only presence instead of showing stale people.
-    "NETWORK_PRESENCE_TTL_MINUTES": "20"
+    "NETWORK_PRESENCE_TTL_MINUTES": "20",
+    // Location for the met.no rain check (defaults to Oslo if unset). Used to
+    // drop outdoor activities from a spin when it's raining.
+    "WEATHER_LAT": "59.9333",
+    "WEATHER_LON": "10.7166"
   }
   // Secrets (set via `npx wrangler secret put <NAME>`, never committed):
   //   SLACK_BOT_TOKEN      — Slack bot token (xoxb-…)

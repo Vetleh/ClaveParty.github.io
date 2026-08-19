@@ -13,6 +13,10 @@ employee to do it. Presence comes from two sources, merged:
   pick a present person + activity.
 - The chosen person taps **I'm on it!** or **Skip / can't right now** (re-picks a
   different person, same activity).
+- About a minute before each spin the screen checks whether it's raining (met.no
+  nowcast, proxied through the Worker). If it is, outdoor activities (`"ute": true`
+  in `activities.json`) are dropped from that spin. If the weather can't be reached,
+  it fails closed (assumes rain) so nobody's sent outside on a maybe-wet day.
 
 ## Edit the activities
 Edit `public/activities.json` and push to `main`. Auto-deploys in seconds.
@@ -22,7 +26,8 @@ Edit `public/config.json`: `spinTimes`, `timezone`, `countdownSeconds`, `graceMi
 `pollSeconds`, `soundFile`.
 
 ## Worker settings (Cloudflare)
-- `wrangler.jsonc` → `vars`: `SLACK_CHANNEL`, `CHECKIN_EMOJI`, `CHECKIN_MESSAGE`, `TIMEZONE`.
+- `wrangler.jsonc` → `vars`: `SLACK_CHANNEL`, `CHECKIN_EMOJI`, `CHECKIN_MESSAGE`, `TIMEZONE`,
+  `WEATHER_LAT`/`WEATHER_LON` (location for the rain check; defaults to Oslo).
 - `triggers.crons`: the morning check-in post time (UTC).
 - Secret: `SLACK_BOT_TOKEN` (`npx wrangler secret put SLACK_BOT_TOKEN`).
 

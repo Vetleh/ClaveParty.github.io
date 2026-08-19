@@ -20,6 +20,11 @@ describe('activities.json', () => {
     const ids = data.aktiviteter.map((a) => a.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
+  it('gives every activity a boolean ute flag (the rain filter depends on it)', () => {
+    for (const a of data.aktiviteter) {
+      expect(typeof a.ute).toBe('boolean');
+    }
+  });
 });
 
 describe('config.json', () => {
