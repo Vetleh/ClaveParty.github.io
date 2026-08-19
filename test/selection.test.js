@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { pick, pickPerson, pickActivity, seasonalActivities } from '../public/selection.js';
+import { pick, pickPerson, pickActivity, seasonalActivities, filterByWeather } from '../public/selection.js';
 
 const people = [{ id: 'a', name: 'A' }, { id: 'b', name: 'B' }, { id: 'c', name: 'C' }];
 const acts = [{ id: 'x1' }, { id: 'y1' }];
@@ -52,6 +52,20 @@ describe('seasonalActivities', () => {
   it('includes everything during June and July', () => {
     expect(ids(6)).toEqual(['y1', 'sm1', 's1', 's2']);
     expect(ids(7)).toEqual(['y1', 'sm1', 's1', 's2']);
+  });
+});
+
+describe('filterByWeather', () => {
+  const acts = [
+    { id: 'in1', ute: false },
+    { id: 'out1', ute: true },
+    { id: 'in2' }, // no ute flag => treated as indoor
+  ];
+  it('drops outdoor (ute:true) activities when raining', () => {
+    expect(filterByWeather(acts, true).map((a) => a.id)).toEqual(['in1', 'in2']);
+  });
+  it('keeps every activity when it is not raining', () => {
+    expect(filterByWeather(acts, false)).toEqual(acts);
   });
 });
 

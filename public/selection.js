@@ -20,6 +20,12 @@ export function seasonalActivities(activities, month) {
   return activities.filter((a) => inSeason(a, month));
 }
 
+// When it's raining, drop activities that require going outside (ute: true).
+// Anything else passes through unchanged.
+export function filterByWeather(activities, raining) {
+  return raining ? activities.filter((a) => a.ute !== true) : activities;
+}
+
 export function pickPerson(present, excluded = []) {
   const candidates = present.filter((p) => !excluded.includes(p.id));
   if (candidates.length === 0) return null;

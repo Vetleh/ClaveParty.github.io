@@ -1,5 +1,5 @@
-import { pick, pickPerson, seasonalActivities } from './selection.js';
-import { dueSpin, nextSpin } from './scheduler.js';
+import { pick, pickPerson, seasonalActivities, filterByWeather } from './selection.js';
+import { dueSpin, nextSpin, duePrefetch } from './scheduler.js';
 import { localMonth } from './datetime.js';
 import { wedgeAngles, rotationFor } from './wheel-geometry.js';
 
@@ -14,6 +14,7 @@ const WHEEL_COLORS = ['#ffd23f', '#ff6b6b', '#4ecdc4', '#a06bff'];
 const LABEL_HIDE_THRESHOLD = 12; // above this many people, show avatars only
 const SPIN_SECONDS_DEFAULT = 5;
 const SPIN_TURNS_DEFAULT = 5;
+const WEATHER_LEAD_MINUTES = 1; // prefetch the rain check this many minutes before a spin
 
 const els = {
   state: document.getElementById('state'),
@@ -34,6 +35,7 @@ const els = {
 let config;
 let activities;
 let round = null; // { activity, present, excluded:Set, current, spinKey, rotation }
+let weatherPrefetch = null; // { spinKey, raining } — rain check stashed for the upcoming spin
 
 const setState = (name) => { els.state.dataset.state = name; };
 
@@ -60,6 +62,22 @@ async function fetchPresent() {
     return present;
   } catch {
     return TEST ? DEMO_ROSTER : [];
+  }
+}
+
+// Best-effort rain check via the worker (which proxies met.no). Fail-closed:
+// any error, or anything but an explicit `false`, is treated as raining so we
+// never send people outside on a maybe-wet day.
+async function fetchRaining() {
+  try {
+    const res = await fetch('/api/weather');
+    const data = await res.json();
+    // Fail closed: only an explicit `false` counts as "confirmed dry". Anything
+    // else — true, or a missing/garbage `raining` field — is treated as rain, so
+    // an unexpected response can never send people outside on a wet day.
+    return data.raining !== false;
+  } catch {
+    return true; // couldn't reach the worker at all — assume rain
   }
 }
 
@@ -221,7 +239,15 @@ async function startSpin(spinKey) {
     return;
   }
 
-  const pool = seasonalActivities(activities, localMonth(new Date(), config.timezone));
+  // Use the reading stashed ~1 min ago for this spin; fall back to a live check
+  // for a manual TEST spin (no spinKey) or if the prefetch window was missed.
+  const raining = (weatherPrefetch && weatherPrefetch.spinKey === spinKey)
+    ? weatherPrefetch.raining
+    : await fetchRaining();
+
+  const seasonal = seasonalActivities(activities, localMonth(new Date(), config.timezone));
+  const dry = filterByWeather(seasonal, raining);
+  const pool = dry.length ? dry : seasonal; // never leave an empty pool
   const { person, activity } = pick(present, pool, getLastActivity(), []);
   round = { activity, present, excluded: new Set(), current: person, spinKey, rotation: 0 };
   setState('spinning');
@@ -258,9 +284,22 @@ els.accept.addEventListener('click', () => {
 });
 
 function tick() {
+  const now = new Date();
   updateNextDraw();
+
+  // Prefetch the rain check ~1 min before a spin so the spin uses a ready
+  // reading. Guarded by spinKey so it fires once, not on every tick in that minute.
+  const weatherLead = config.weatherLeadMinutes || WEATHER_LEAD_MINUTES;
+  const prefetchKey = duePrefetch(now, config.spinTimes, config.timezone, weatherLead);
+  if (prefetchKey && (!weatherPrefetch || weatherPrefetch.spinKey !== prefetchKey)) {
+    weatherPrefetch = { spinKey: prefetchKey, raining: true }; // fail-closed until the fetch resolves
+    fetchRaining().then((r) => {
+      if (weatherPrefetch && weatherPrefetch.spinKey === prefetchKey) weatherPrefetch.raining = r;
+    });
+  }
+
   if (els.state.dataset.state !== 'idle') return; // a spin is in progress
-  const key = dueSpin(new Date(), config.spinTimes, ranKeys(), config.timezone, config.graceMinutes);
+  const key = dueSpin(now, config.spinTimes, ranKeys(), config.timezone, config.graceMinutes);
   if (key) startSpin(key);
 }
 

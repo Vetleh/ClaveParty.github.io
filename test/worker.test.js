@@ -34,6 +34,24 @@ describe('worker.fetch', () => {
     expect(env.ASSETS.fetch).toHaveBeenCalled();
     expect(res.status).toBe(200);
   });
+
+  it('reports raining:false when met.no shows no precipitation', async () => {
+    vi.spyOn(console, 'info').mockImplementation(() => {});
+    globalThis.fetch = vi.fn(async () => ({ ok: true, status: 200, json: async () => ({
+      properties: { timeseries: [{ data: { instant: { details: { precipitation_rate: 0 } } } }] },
+    }) }));
+    const res = await worker.fetch(new Request('https://x/api/weather'), baseEnv());
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ raining: false });
+  });
+
+  it('fails closed to raining:true when met.no is unreachable', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    globalThis.fetch = vi.fn(async () => ({ ok: false, status: 500, json: async () => ({}) }));
+    const res = await worker.fetch(new Request('https://x/api/weather'), baseEnv());
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ raining: true });
+  });
 });
 
 describe('worker.scheduled', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { dueSpin, nextSpin } from '../public/scheduler.js';
+import { dueSpin, nextSpin, duePrefetch } from '../public/scheduler.js';
 
 const TZ = 'Europe/Oslo';
 const TIMES = ['10:30', '14:30'];
@@ -57,5 +57,27 @@ describe('nextSpin', () => {
   it('handles unsorted spin times', () => {
     // 06:00Z = 08:00 Oslo
     expect(nextSpin(new Date('2026-06-26T06:00:00Z'), ['14:30', '10:30'], [], TZ)).toEqual({ time: '10:30', today: true });
+  });
+});
+
+describe('duePrefetch', () => {
+  it('fires exactly one minute before a spin (default lead)', () => {
+    // 08:29Z = 10:29 Oslo, 1 min before 10:30
+    expect(duePrefetch(new Date('2026-06-26T08:29:00Z'), TIMES, TZ)).toBe('2026-06-26T10:30');
+  });
+
+  it('does not fire two minutes before', () => {
+    // 08:28Z = 10:28 Oslo
+    expect(duePrefetch(new Date('2026-06-26T08:28:00Z'), TIMES, TZ)).toBeNull();
+  });
+
+  it('does not fire at the spin time itself', () => {
+    // 08:30Z = 10:30 Oslo
+    expect(duePrefetch(new Date('2026-06-26T08:30:00Z'), TIMES, TZ)).toBeNull();
+  });
+
+  it('honors a custom leadMinutes', () => {
+    // 08:25Z = 10:25 Oslo, 5 min before 10:30
+    expect(duePrefetch(new Date('2026-06-26T08:25:00Z'), TIMES, TZ, 5)).toBe('2026-06-26T10:30');
   });
 });

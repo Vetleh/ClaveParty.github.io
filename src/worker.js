@@ -1,6 +1,7 @@
 import { getPresent as getSlackPresent, postCheckin } from './slack.js';
 import { getNetworkDevices, storeScan } from './network.js';
 import { matchDevices, mergePresence } from './presence.js';
+import { isRaining } from './weather.js';
 import { people } from '../people.js';
 
 export default {
@@ -69,6 +70,18 @@ export default {
         });
       } catch (err) {
         return Response.json({ error: String(err.message || err) }, { status: 400 });
+      }
+    }
+
+    // Is it raining? Prefetched by the screen ~1 min before a spin so outdoor
+    // activities can be dropped. Fail-closed: if met.no can't be reached we
+    // report rain, so a spin never suggests going outside on a maybe-wet day.
+    if (url.pathname === '/api/weather') {
+      try {
+        const raining = await isRaining(env);
+        return Response.json({ raining });
+      } catch {
+        return Response.json({ raining: true });
       }
     }
 
