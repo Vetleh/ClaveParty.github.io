@@ -8,8 +8,8 @@ const MET_URL = 'https://api.met.no/weatherapi/nowcast/2.0/complete';
 const WEATHER_USER_AGENT = 'clave-party/1.0 (github.com/Vetleh/ClaveParty.github.io)';
 const MAX_ATTEMPTS = 3; // total tries before giving up (caller then fails closed)
 
-const DEFAULT_LAT = '59.9333'; // Oslo
-const DEFAULT_LON = '10.7166';
+const DEFAULT_LAT = '59.9105'; // Kongens gate 12, Oslo
+const DEFAULT_LON = '10.7422';
 
 // Returns true if it is currently precipitating at the configured location.
 // Any precipitation (> 0 mm/h) counts as rain. Throws if met.no cannot be
