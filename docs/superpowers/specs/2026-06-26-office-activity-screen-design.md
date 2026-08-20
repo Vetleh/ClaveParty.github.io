@@ -100,6 +100,11 @@ auto-deploys. Reachable on a `*.workers.dev` URL or a custom domain.
 
 ## Selection Logic
 
+> **Superseded (2026-08-20).** Which activities are *eligible* is now decided by a
+> `betingelse` query on each activity, evaluated in the Worker — see
+> `2026-08-20-activity-query-language-design.md`. The `pick` behaviour below still
+> holds; it just receives an already-filtered pool.
+
 Pure, framework-free, unit-testable:
 
 ```
@@ -121,6 +126,10 @@ pick(present, activities, lastActivity, excluded):
 ## Data Shapes
 
 ### `activities.json`
+
+> **Superseded (2026-08-20).** The shipped shape uses `aktiviteter` with
+> `id`/`kategori`/`tekst` plus an optional `betingelse` condition — see
+> `2026-08-20-activity-query-language-design.md`.
 
 ```json
 {
