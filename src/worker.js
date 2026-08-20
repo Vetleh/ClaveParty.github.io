@@ -80,7 +80,10 @@ export default {
       try {
         const raining = await isRaining(env);
         return Response.json({ raining });
-      } catch {
+      } catch (err) {
+        console.error('met.no unreachable, failing closed to raining=true', {
+          error: String(err?.message || err),
+        });
         return Response.json({ raining: true });
       }
     }

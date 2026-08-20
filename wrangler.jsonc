@@ -2,6 +2,10 @@
   "name": "clave-party",
   "main": "src/worker.js",
   "compatibility_date": "2026-06-01",
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
   "assets": {
     "directory": "public",
     "binding": "ASSETS"
@@ -20,10 +24,10 @@
     // Network scans older than this are ignored, so a stopped agent quietly
     // falls back to Slack-only presence instead of showing stale people.
     "NETWORK_PRESENCE_TTL_MINUTES": "20",
-    // Location for the met.no rain check (defaults to Oslo if unset). Used to
+    // Location for the met.no rain check (defaults to "Kongens gate 12, Oslo" if unset). Used to
     // drop outdoor activities from a spin when it's raining.
-    "WEATHER_LAT": "59.9333",
-    "WEATHER_LON": "10.7166"
+    "WEATHER_LAT": "59.9105",
+    "WEATHER_LON": "10.7422"
   }
   // Secrets (set via `npx wrangler secret put <NAME>`, never committed):
   //   SLACK_BOT_TOKEN      — Slack bot token (xoxb-…)

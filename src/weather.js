@@ -38,5 +38,9 @@ export async function isRaining(env) {
       console.warn('met.no nowcast failed', { attempt, error: String(err.message || err) });
     }
   }
+  console.error('met.no nowcast giving up', {
+    attempts: MAX_ATTEMPTS,
+    error: String(lastErr?.message || lastErr),
+  });
   throw lastErr;
 }
