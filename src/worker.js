@@ -2,6 +2,8 @@ import { getPresent as getSlackPresent, postCheckin } from './slack.js';
 import { getNetworkDevices, storeScan } from './network.js';
 import { matchDevices, mergePresence } from './presence.js';
 import { isRaining } from './weather.js';
+import { buildContext } from './providers.js';
+import { activities, filterActivities } from './activities.js';
 import { people } from '../people.js';
 
 export default {
@@ -86,6 +88,16 @@ export default {
         });
         return Response.json({ raining: true });
       }
+    }
+
+    // The activities eligible for a spin right now. The screen prefetches this
+    // ~1 min before a spin. The server assembles a context from all data
+    // providers (date/time, weather, …) and evaluates each activity's
+    // `betingelse` query against it; `context` is returned too for debugging.
+    if (url.pathname === '/api/activities') {
+      const context = await buildContext(env, new Date());
+      const pool = filterActivities(activities, context);
+      return Response.json({ activities: pool, context });
     }
 
     // Everything else: static assets (with default routing, the Worker is only

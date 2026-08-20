@@ -2,428 +2,283 @@
   "beskrivelse": "Aktiviteter for kontor-tjenesten. Person plukkes tilfeldig blant de som har meldt seg 'jeg er her' i Slack. Den utvalgte samler gjengen.",
   "felt": {
     "id": "unik id",
-    "kategori": "gruppering",
+    "kategori": "gruppering som vises på skjermen",
     "tekst": "det som vises på skjermen",
-    "vanskelighet": "lett = gjør det med en gang | medium = krever litt arrangering",
-    "sesong": "hele_aret | sommer",
-    "ute": "true hvis aktiviteten krever å gå ut"
+    "betingelse": "valgfritt spørrespråk-uttrykk som må være sant for at aktiviteten er aktuell; utelat feltet for aktiviteter som alltid gjelder. Egenskaper: month (1-12), hour (0-23), weekday (1=man..7=søn), dateISO, raining, precipitationRate, temperature (°C), cloudCover (%), sunny. Operatorer: eq neq gt gte lt lte, and or not, og parenteser. Skriv positive krav (raining eq false), ikke not (raining eq true) — ukjente verdier gjør et krav usant (fail-closed)."
   },
   "aktiviteter": [
     {
       "id": "mat-01",
       "kategori": "Mat & drikke",
       "tekst": "Ta med gjengen ut og spis is. Tak hvis været tillater det.",
-      "vanskelighet": "medium",
-      "sesong": "sommer",
-      "ute": true
+      "betingelse": "month gte 5 and month lte 8 and raining eq false"
     },
     {
       "id": "mat-02",
       "kategori": "Mat & drikke",
-      "tekst": "Sett over en kanne kaffe eller te og rop 'kaffepause!'. Alle som vil får ti minutter.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Sett over en kanne kaffe eller te og rop 'kaffepause!'. Alle som vil får ti minutter."
     },
     {
       "id": "mat-03",
       "kategori": "Mat & drikke",
-      "tekst": "Del ut frukt til alle du møter på veien til kjøkkenet.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Del ut frukt til alle du møter på veien til kjøkkenet."
     },
     {
       "id": "mat-04",
       "kategori": "Mat & drikke",
-      "tekst": "Bestem dagens kjeks. Du har vetorett. Hent en pakke til fellesarealet.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Bestem dagens kjeks. Du har vetorett. Hent en pakke til fellesarealet."
     },
     {
       "id": "mat-05",
       "kategori": "Mat & drikke",
-      "tekst": "Arranger en spontan smakstest: to typer snacks, la folk stemme.",
-      "vanskelighet": "medium",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Arranger en spontan smakstest: to typer snacks, la folk stemme."
     },
     {
       "id": "prat-01",
       "kategori": "Små spørsmål & prat",
-      "tekst": "Still gjengen i ring og still dagens spørsmål.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Still gjengen i ring og still dagens spørsmål."
     },
     {
       "id": "prat-04",
       "kategori": "Små spørsmål & prat",
-      "tekst": "Spør tre kolleger hva de hører på akkurat nå, og lag en felles spilleliste.",
-      "vanskelighet": "medium",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Spør tre kolleger hva de hører på akkurat nå, og lag en felles spilleliste."
     },
     {
       "id": "beveg-01",
       "kategori": "Bevegelse & frisk luft",
       "tekst": "Ta med deg minst to personer på en runde rundt kvartalet.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": true
+      "betingelse": "raining eq false"
     },
     {
       "id": "beveg-02",
       "kategori": "Bevegelse & frisk luft",
-      "tekst": "Led et 60-sekunders strekk ved pultene. Du bestemmer øvelsene.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Led et 60-sekunders strekk ved pultene. Du bestemmer øvelsene."
     },
     {
       "id": "beveg-03",
       "kategori": "Bevegelse & frisk luft",
       "tekst": "Arranger en luftegåtur. Den som blir med får velge rute neste gang.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": true
+      "betingelse": "raining eq false"
     },
     {
       "id": "lek-01",
       "kategori": "Lek & lavterskel konkurranse",
-      "tekst": "Start en kort runde med et bordspill eller kortstokk i pausen.",
-      "vanskelighet": "medium",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Start en kort runde med et bordspill eller kortstokk i pausen."
     },
     {
       "id": "lek-02",
       "kategori": "Lek & lavterskel konkurranse",
-      "tekst": "Utfordre én kollega til en duell du selv velger: stein-saks-papir, gjett-låta eller papirflykast.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Utfordre én kollega til en duell du selv velger: stein-saks-papir, gjett-låta eller papirflykast."
     },
     {
       "id": "lek-03",
       "kategori": "Lek & lavterskel konkurranse",
-      "tekst": "Arranger en 5-minutters quiz med tre spørsmål du finner på selv.",
-      "vanskelighet": "medium",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Arranger en 5-minutters quiz med tre spørsmål du finner på selv."
     },
     {
       "id": "lek-04",
       "kategori": "Lek & lavterskel konkurranse",
-      "tekst": "Hold en mini-gjettelek: 'hva er i lomma mi eller på pulten min'.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Hold en mini-gjettelek: 'hva er i lomma mi eller på pulten min'."
     },
     {
       "id": "kos-01",
       "kategori": "Koselig & uventet",
-      "tekst": "Gi en ærlig kompliment til en kollega.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Gi en ærlig kompliment til en kollega."
     },
     {
       "id": "kos-02",
       "kategori": "Koselig & uventet",
-      "tekst": "Tegn dagens stemning på tavla og be folk legge til sin egen strek.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Tegn dagens stemning på tavla og be folk legge til sin egen strek."
     },
     {
       "id": "kos-03",
       "kategori": "Koselig & uventet",
-      "tekst": "Velg dagens låt og spill den på fellesanlegget. Hold den kontorvennlig.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Velg dagens låt og spill den på fellesanlegget. Hold den kontorvennlig."
     },
     {
       "id": "kos-04",
       "kategori": "Koselig & uventet",
-      "tekst": "Sett deg ved siden av noen du sjelden snakker med og spør hva de jobber med.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Sett deg ved siden av noen du sjelden snakker med og spør hva de jobber med."
     },
     {
       "id": "kos-05",
       "kategori": "Koselig & uventet",
-      "tekst": "Fortell gjengen om en liten ting du gleder deg til denne uka.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Fortell gjengen om en liten ting du gleder deg til denne uka."
     },
     {
       "id": "sommer-01",
       "kategori": "Sommerspesial",
       "tekst": "Ta med gjengen ut i sola i ti minutter. Pålegg: ikke snakk om jobb.",
-      "vanskelighet": "lett",
-      "sesong": "sommer",
-      "ute": true
+      "betingelse": "month gte 6 and month lte 7 and raining eq false"
     },
     {
       "id": "sommer-02",
       "kategori": "Sommerspesial",
       "tekst": "Sjekk badetemperaturen og foreslå afterwork-bad for de som er med.",
-      "vanskelighet": "medium",
-      "sesong": "sommer",
-      "ute": false
+      "betingelse": "month gte 6 and month lte 7"
     },
     {
       "id": "sommer-03",
       "kategori": "Sommerspesial",
       "tekst": "Grill-sjekk: er det grillvær? Planlegg spontan grilling med dem som vil.",
-      "vanskelighet": "medium",
-      "sesong": "sommer",
-      "ute": false
+      "betingelse": "month gte 6 and month lte 7"
     },
     {
       "id": "mat-06",
       "kategori": "Mat & drikke",
-      "tekst": "Sett fram en skål med sjokolade eller drops midt i fellesarealet, uten forklaring.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Sett fram en skål med sjokolade eller drops midt i fellesarealet, uten forklaring."
     },
     {
       "id": "mat-07",
       "kategori": "Mat & drikke",
-      "tekst": "Spør tre stykker hva de skal ha til middag i kveld, og del tips.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Spør tre stykker hva de skal ha til middag i kveld, og del tips."
     },
     {
       "id": "mat-08",
       "kategori": "Mat & drikke",
-      "tekst": "Lag en kanne sitronvann eller squash og sett den fram til alle.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Lag en kanne sitronvann eller squash og sett den fram til alle."
     },
     {
       "id": "mat-09",
       "kategori": "Mat & drikke",
-      "tekst": "Gå en runde og spør hvem som trenger påfyll av kaffe eller te, og fyll opp for dem.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Gå en runde og spør hvem som trenger påfyll av kaffe eller te, og fyll opp for dem."
     },
     {
       "id": "mat-10",
       "kategori": "Mat & drikke",
-      "tekst": "Finn fram restene fra gårsdagens møte (kake, frukt e.l.) og server dem før de blir kastet.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Finn fram restene fra gårsdagens møte (kake, frukt e.l.) og server dem før de blir kastet."
     },
     {
       "id": "prat-05",
       "kategori": "Små spørsmål & prat",
-      "tekst": "Spør tre kolleger om planene deres for helgen.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Spør tre kolleger om planene deres for helgen."
     },
     {
       "id": "prat-06",
       "kategori": "Små spørsmål & prat",
-      "tekst": "Spør rundt hvem som har den mest uvanlige hobbyen, og hør mer om den.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Spør rundt hvem som har den mest uvanlige hobbyen, og hør mer om den."
     },
     {
       "id": "prat-07",
       "kategori": "Små spørsmål & prat",
-      "tekst": "Spør tre personer hva som var høydepunktet i uka så langt.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Spør tre personer hva som var høydepunktet i uka så langt."
     },
     {
       "id": "prat-08",
       "kategori": "Små spørsmål & prat",
-      "tekst": "Gå rundt og spør hva folk gleder seg mest til i helgen.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Gå rundt og spør hva folk gleder seg mest til i helgen."
     },
     {
       "id": "prat-09",
       "kategori": "Små spørsmål & prat",
-      "tekst": "Finn ut hvem som har bodd på flest forskjellige steder, og hør den korte versjonen.",
-      "vanskelighet": "medium",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Finn ut hvem som har bodd på flest forskjellige steder, og hør den korte versjonen."
     },
     {
       "id": "beveg-04",
       "kategori": "Bevegelse & frisk luft",
       "tekst": "Ta en kort tur til nærmeste kiosk eller butikk med den som blir med.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": true
+      "betingelse": "raining eq false"
     },
     {
       "id": "beveg-05",
       "kategori": "Bevegelse & frisk luft",
-      "tekst": "Stå opp fra pulten og gjør ti armhevninger eller knebøy sammen med de som vil.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Stå opp fra pulten og gjør ti armhevninger eller knebøy sammen med de som vil."
     },
     {
       "id": "beveg-06",
       "kategori": "Bevegelse & frisk luft",
-      "tekst": "Ta trappene i stedet for heisen én ekstra runde, og dra med noen.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Ta trappene i stedet for heisen én ekstra runde, og dra med noen."
     },
     {
       "id": "beveg-07",
       "kategori": "Bevegelse & frisk luft",
       "tekst": "Gå en rolig runde ute og pust litt frisk luft, maks fem minutter.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": true
+      "betingelse": "raining eq false"
     },
     {
       "id": "beveg-08",
       "kategori": "Bevegelse & frisk luft",
-      "tekst": "Strekk ut nakke og skuldre sammen ved pultene i ett minutt.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Strekk ut nakke og skuldre sammen ved pultene i ett minutt."
     },
     {
       "id": "lek-05",
       "kategori": "Lek & lavterskel konkurranse",
-      "tekst": "Utfordre en kollega til hoderegning-duell: første til feil taper.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Utfordre en kollega til hoderegning-duell: første til feil taper."
     },
     {
       "id": "lek-06",
       "kategori": "Lek & lavterskel konkurranse",
-      "tekst": "Start en runde 'to sanne, en usann' med de som er i nærheten.",
-      "vanskelighet": "medium",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Start en runde 'to sanne, en usann' med de som er i nærheten."
     },
     {
       "id": "lek-07",
       "kategori": "Lek & lavterskel konkurranse",
-      "tekst": "Spill 'assosiasjonskjeden': ett ord hver, se hvor lenge dere klarer å holde det gående.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Spill 'assosiasjonskjeden': ett ord hver, se hvor lenge dere klarer å holde det gående."
     },
     {
       "id": "lek-08",
       "kategori": "Lek & lavterskel konkurranse",
-      "tekst": "Tegn et kjent objekt på 30 sekunder uten å se på papiret, la de andre gjette hva det er.",
-      "vanskelighet": "medium",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Tegn et kjent objekt på 30 sekunder uten å se på papiret, la de andre gjette hva det er."
     },
     {
       "id": "lek-09",
       "kategori": "Lek & lavterskel konkurranse",
-      "tekst": "Kjør en rask 'hvem er det'-runde: beskriv en kollega med tre stikkord og la resten gjette.",
-      "vanskelighet": "medium",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Kjør en rask 'hvem er det'-runde: beskriv en kollega med tre stikkord og la resten gjette."
     },
     {
       "id": "kos-06",
       "kategori": "Koselig & uventet",
-      "tekst": "Skriv en anonym hyggelig lapp og legg den på pulten til noen.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Skriv en anonym hyggelig lapp og legg den på pulten til noen."
     },
     {
       "id": "kos-07",
       "kategori": "Koselig & uventet",
-      "tekst": "Fortell om noe du er stolt av å ha fått til denne uka.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Fortell om noe du er stolt av å ha fått til denne uka."
     },
     {
       "id": "kos-08",
       "kategori": "Koselig & uventet",
-      "tekst": "Del en app, serie eller podcast du har blitt hekta på nylig.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Del en app, serie eller podcast du har blitt hekta på nylig."
     },
     {
       "id": "kos-09",
       "kategori": "Koselig & uventet",
-      "tekst": "Spør noen om å vise fram noe kult på pulten eller skjermen sin.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Spør noen om å vise fram noe kult på pulten eller skjermen sin."
     },
     {
       "id": "kos-10",
       "kategori": "Koselig & uventet",
-      "tekst": "Gi en kollega en high-five og takk for noe konkret de har hjulpet med.",
-      "vanskelighet": "lett",
-      "sesong": "hele_aret",
-      "ute": false
+      "tekst": "Gi en kollega en high-five og takk for noe konkret de har hjulpet med."
     },
     {
       "id": "sommer-04",
       "kategori": "Sommerspesial",
       "tekst": "Ta med kaffen ut i sola og bli der i ti minutter.",
-      "vanskelighet": "lett",
-      "sesong": "sommer",
-      "ute": true
+      "betingelse": "month gte 6 and month lte 7 and raining eq false"
     },
     {
       "id": "sommer-05",
       "kategori": "Sommerspesial",
       "tekst": "Sjekk værmeldingen og foreslå en kort iskrempause hvis det er varmt.",
-      "vanskelighet": "medium",
-      "sesong": "sommer",
-      "ute": false
+      "betingelse": "month gte 6 and month lte 7"
     },
     {
       "id": "sommer-06",
       "kategori": "Sommerspesial",
       "tekst": "Finn fram solbrillene og ta et raskt gruppebilde ute.",
-      "vanskelighet": "lett",
-      "sesong": "sommer",
-      "ute": true
+      "betingelse": "month gte 6 and month lte 7 and raining eq false"
     },
     {
       "id": "sommer-07",
       "kategori": "Sommerspesial",
       "tekst": "Foreslå en kort spasertur i lunsjen mens det er lyst og varmt.",
-      "vanskelighet": "lett",
-      "sesong": "sommer",
-      "ute": true
+      "betingelse": "month gte 6 and month lte 7 and raining eq false"
     },
     {
       "id": "sommer-08",
       "kategori": "Sommerspesial",
       "tekst": "Sett fram en bolle med is-pinner i fellesarealet en varm dag.",
-      "vanskelighet": "lett",
-      "sesong": "sommer",
-      "ute": false
+      "betingelse": "month gte 6 and month lte 7"
     }
   ]
 }
