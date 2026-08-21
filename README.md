@@ -47,7 +47,8 @@ Two rules worth knowing:
 `npm test` validates every `betingelse` — it fails on a syntax error or a misspelled
 property, so a typo can't reach the screen.
 
-New data source? Add one provider to `src/providers.js`; its properties become
+New data source? Write a provider module under `src/` (see `src/clock.js` for the
+smallest example) and list it in `src/providers.js`; its properties become
 available to every condition with no change to the query engine.
 
 ## Configure timing / behavior

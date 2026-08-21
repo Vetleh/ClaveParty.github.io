@@ -76,7 +76,8 @@ at spin time                       ◀──────  { activities: pool, co
 | File | Responsibility |
 |---|---|
 | `src/query.js` | The language: `tokenize` → `parse` → `evaluate`, plus `compile(query, allowedProps?)` returning a `(context) => boolean` predicate. Pure, no I/O, no `eval`. |
-| `src/providers.js` | Provider registry. `buildContext(env, now)` runs every provider best-effort and merges their properties; `declaredProperties()` is the query vocabulary. |
+| `src/providers.js` | Provider **registry** only. `buildContext(env, now)` runs every provider best-effort and merges their properties; `declaredProperties()` is the query vocabulary. |
+| `src/clock.js` | The clock provider (`month`, `hour`, `weekday`, `dateISO`). |
 | `src/weather.js` | The weather provider (and `isRaining`, still used by the legacy `/api/weather`). |
 | `src/activities.js` | Bundles `public/activities.json` and exposes `filterActivities(list, context)`. |
 | `src/worker.js` | The `/api/activities` route. |
@@ -211,8 +212,10 @@ combinations, zero differences.
 
 ## Adding a data source
 
-One object in `PROVIDERS` (`src/providers.js`); its properties become queryable
-immediately. Reusing the existing presence pipeline, for example:
+**One provider per file** under `src/`, listed in `PROVIDERS` (`src/providers.js`)
+— which stays a registry and holds no provider of its own. The new properties
+become queryable immediately. Reusing the existing presence pipeline, for
+example, as `src/office.js`:
 
 ```js
 {
