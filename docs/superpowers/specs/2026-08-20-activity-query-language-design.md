@@ -45,6 +45,9 @@ Before this, eligibility was three special-cased fields (`kategori ===
   no user-defined variables.
 - No per-activity weighting or scheduling — eligibility is boolean; the pick
   stays uniform-random.
+  **Superseded (2026-08-21):** an optional per-activity `vekting` now biases the
+  pick in `public/selection.js`. Eligibility is still boolean; weighting only
+  decides how likely each *eligible* activity is.
 - No authoring UI. Conditions are hand-written in `activities.json` and
   validated by the test suite.
 

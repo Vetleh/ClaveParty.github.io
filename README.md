@@ -23,14 +23,19 @@ employee to do it. Presence comes from two sources, merged:
 ## Edit the activities
 Edit `public/activities.json` and push to `main`. Auto-deploys in seconds.
 
-Each activity has an `id`, a `kategori` (shown on screen), the `tekst` itself, and an
-optional `betingelse` — a condition that must hold for the activity to be eligible.
-Leave `betingelse` out and the activity always applies.
+Each activity has an `id`, a `kategori` (shown on screen), the `tekst` itself, an
+optional `betingelse` — a condition that must hold for the activity to be eligible —
+and an optional `vekting`. Leave `betingelse` out and the activity always applies.
 
 ```jsonc
 { "id": "sommer-01", "kategori": "Sommerspesial", "tekst": "Ta med gjengen ut i sola…",
-  "betingelse": "month gte 6 and month lte 7 and raining eq false" }
+  "betingelse": "month gte 6 and month lte 7 and raining eq false", "vekting": 5 }
 ```
+
+`vekting` is the relative likelihood of being drawn among the activities eligible right
+now — a positive number, 1 when the field is left out. The conditional activities ship
+at `vekting: 5`, so a summer special is five times as likely as an everyday activity
+during the short window it is eligible. Everything else is left at the default.
 
 Properties you can use: `month` (1-12), `hour` (0-23), `weekday` (1=Mon…7=Sun),
 `dateISO`, `raining`, `precipitationRate`, `temperature` (°C), `cloudCover` (%),

@@ -30,6 +30,36 @@ describe('pickActivity', () => {
   it('returns null for an empty activity list', () => {
     expect(pickActivity([], null)).toBeNull();
   });
+  it('favours a heavier activity where a uniform draw would not', () => {
+    const weighted = [{ id: 'a' }, { id: 'b', vekting: 3 }]; // total vekting 4
+    vi.spyOn(Math, 'random').mockReturnValue(0.3); // 1.2 into the range -> b
+    expect(pickActivity(weighted, null)).toEqual({ id: 'b', vekting: 3 });
+    // A uniform draw at 0.3 would have landed on the first entry instead.
+  });
+  it('stays inside the lighter activity below the vekting boundary', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.2); // 0.8 into the range -> a
+    expect(pickActivity([{ id: 'a' }, { id: 'b', vekting: 3 }], null)).toEqual({ id: 'a' });
+  });
+  it('treats a missing vekting as 1', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.3);
+    const implicit = pickActivity([{ id: 'a' }, { id: 'b', vekting: 3 }], null);
+    const explicit = pickActivity([{ id: 'a', vekting: 1 }, { id: 'b', vekting: 3 }], null);
+    expect(implicit.id).toBe(explicit.id);
+  });
+  it('falls back to 1 for a zero, negative, or non-numeric vekting', () => {
+    // Nothing drops out of the pool and the total never becomes 0.
+    vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    const acts = [{ id: 'a', vekting: 0 }, { id: 'b', vekting: -2 }, { id: 'c', vekting: 'abc' }];
+    expect(pickActivity(acts, null)).toEqual({ id: 'b', vekting: -2 }); // middle of 3 equal slots
+  });
+  it('avoids repeating the last activity even when it is the heaviest', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.9);
+    expect(pickActivity([{ id: 'a' }, { id: 'b', vekting: 99 }], { id: 'b' })).toEqual({ id: 'a' });
+  });
+  it('returns the last activity at the very top of the range', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.9999999999999999);
+    expect(pickActivity([{ id: 'a', vekting: 2 }, { id: 'b' }], null)).toEqual({ id: 'b' });
+  });
 });
 
 describe('pick', () => {

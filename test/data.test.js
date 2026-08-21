@@ -22,6 +22,13 @@ describe('activities.json', () => {
     const ids = data.aktiviteter.map((a) => a.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
+  it('gives every vekting, when present, a positive finite number', () => {
+    for (const a of data.aktiviteter) {
+      if (a.vekting === undefined) continue;
+      expect(typeof a.vekting, a.id).toBe('number');
+      expect(Number.isFinite(a.vekting) && a.vekting > 0, a.id).toBe(true);
+    }
+  });
   it('gives every betingelse a query that parses and uses only declared properties', () => {
     const allowed = declaredProperties();
     for (const a of data.aktiviteter) {

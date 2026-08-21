@@ -4,14 +4,16 @@
     "id": "unik id",
     "kategori": "gruppering som vises på skjermen",
     "tekst": "det som vises på skjermen",
-    "betingelse": "valgfritt spørrespråk-uttrykk som må være sant for at aktiviteten er aktuell; utelat feltet for aktiviteter som alltid gjelder. Egenskaper: month (1-12), hour (0-23), weekday (1=man..7=søn), dateISO, raining, precipitationRate, temperature (°C), cloudCover (%), sunny. Operatorer: eq neq gt gte lt lte, and or not, og parenteser. Skriv positive krav (raining eq false), ikke not (raining eq true) — ukjente verdier gjør et krav usant (fail-closed)."
+    "betingelse": "valgfritt spørrespråk-uttrykk som må være sant for at aktiviteten er aktuell; utelat feltet for aktiviteter som alltid gjelder. Egenskaper: month (1-12), hour (0-23), weekday (1=man..7=søn), dateISO, raining, precipitationRate, temperature (°C), cloudCover (%), sunny. Operatorer: eq neq gt gte lt lte, and or not, og parenteser. Skriv positive krav (raining eq false), ikke not (raining eq true) — ukjente verdier gjør et krav usant (fail-closed).",
+    "vekting": "valgfri relativ sannsynlighet blant de aktuelle aktivitetene; positivt tall, utelatt = 1. vekting 5 betyr fem ganger så sannsynlig som en aktivitet uten vekting."
   },
   "aktiviteter": [
     {
       "id": "mat-01",
       "kategori": "Mat & drikke",
       "tekst": "Ta med gjengen ut og spis is. Tak hvis været tillater det.",
-      "betingelse": "month gte 5 and month lte 8 and raining eq false"
+      "betingelse": "month gte 5 and month lte 8 and raining eq false",
+      "vekting": 5
     },
     {
       "id": "mat-02",
@@ -47,7 +49,8 @@
       "id": "beveg-01",
       "kategori": "Bevegelse & frisk luft",
       "tekst": "Ta med deg minst to personer på en runde rundt kvartalet.",
-      "betingelse": "raining eq false"
+      "betingelse": "raining eq false",
+      "vekting": 5
     },
     {
       "id": "beveg-02",
@@ -58,7 +61,8 @@
       "id": "beveg-03",
       "kategori": "Bevegelse & frisk luft",
       "tekst": "Arranger en luftegåtur. Den som blir med får velge rute neste gang.",
-      "betingelse": "raining eq false"
+      "betingelse": "raining eq false",
+      "vekting": 5
     },
     {
       "id": "lek-01",
@@ -109,19 +113,22 @@
       "id": "sommer-01",
       "kategori": "Sommerspesial",
       "tekst": "Ta med gjengen ut i sola i ti minutter. Pålegg: ikke snakk om jobb.",
-      "betingelse": "month gte 6 and month lte 7 and raining eq false"
+      "betingelse": "month gte 6 and month lte 7 and raining eq false",
+      "vekting": 5
     },
     {
       "id": "sommer-02",
       "kategori": "Sommerspesial",
       "tekst": "Sjekk badetemperaturen og foreslå afterwork-bad for de som er med.",
-      "betingelse": "month gte 6 and month lte 7"
+      "betingelse": "month gte 6 and month lte 7",
+      "vekting": 5
     },
     {
       "id": "sommer-03",
       "kategori": "Sommerspesial",
       "tekst": "Grill-sjekk: er det grillvær? Planlegg spontan grilling med dem som vil.",
-      "betingelse": "month gte 6 and month lte 7"
+      "betingelse": "month gte 6 and month lte 7",
+      "vekting": 5
     },
     {
       "id": "mat-06",
@@ -177,7 +184,8 @@
       "id": "beveg-04",
       "kategori": "Bevegelse & frisk luft",
       "tekst": "Ta en kort tur til nærmeste kiosk eller butikk med den som blir med.",
-      "betingelse": "raining eq false"
+      "betingelse": "raining eq false",
+      "vekting": 5
     },
     {
       "id": "beveg-05",
@@ -193,7 +201,8 @@
       "id": "beveg-07",
       "kategori": "Bevegelse & frisk luft",
       "tekst": "Gå en rolig runde ute og pust litt frisk luft, maks fem minutter.",
-      "betingelse": "raining eq false"
+      "betingelse": "raining eq false",
+      "vekting": 5
     },
     {
       "id": "beveg-08",
@@ -254,31 +263,36 @@
       "id": "sommer-04",
       "kategori": "Sommerspesial",
       "tekst": "Ta med kaffen ut i sola og bli der i ti minutter.",
-      "betingelse": "month gte 6 and month lte 7 and raining eq false"
+      "betingelse": "month gte 6 and month lte 7 and raining eq false",
+      "vekting": 5
     },
     {
       "id": "sommer-05",
       "kategori": "Sommerspesial",
       "tekst": "Sjekk værmeldingen og foreslå en kort iskrempause hvis det er varmt.",
-      "betingelse": "month gte 6 and month lte 7"
+      "betingelse": "month gte 6 and month lte 7",
+      "vekting": 5
     },
     {
       "id": "sommer-06",
       "kategori": "Sommerspesial",
       "tekst": "Finn fram solbrillene og ta et raskt gruppebilde ute.",
-      "betingelse": "month gte 6 and month lte 7 and raining eq false"
+      "betingelse": "month gte 6 and month lte 7 and raining eq false",
+      "vekting": 5
     },
     {
       "id": "sommer-07",
       "kategori": "Sommerspesial",
       "tekst": "Foreslå en kort spasertur i lunsjen mens det er lyst og varmt.",
-      "betingelse": "month gte 6 and month lte 7 and raining eq false"
+      "betingelse": "month gte 6 and month lte 7 and raining eq false",
+      "vekting": 5
     },
     {
       "id": "sommer-08",
       "kategori": "Sommerspesial",
       "tekst": "Sett fram en bolle med is-pinner i fellesarealet en varm dag.",
-      "betingelse": "month gte 6 and month lte 7"
+      "betingelse": "month gte 6 and month lte 7",
+      "vekting": 5
     }
   ]
 }
