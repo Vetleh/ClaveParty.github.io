@@ -85,6 +85,12 @@
       "tekst": "Hold en mini-gjettelek: 'hva er i lomma mi eller på pulten min'."
     },
     {
+      "id": "innedag",
+      "kategori": "innedag",
+      "tekst": "INNEDAG! Det er innedag og fint vær, ta med noe godt å drikke og ta 10 min på takterassen.",
+      "vekting": 99999999
+    },
+    {
       "id": "kos-01",
       "kategori": "Koselig & uventet",
       "tekst": "Gi en ærlig kompliment til en kollega."
