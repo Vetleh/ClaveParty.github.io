@@ -13,10 +13,11 @@
 
 import { clockProvider } from './clock.js';
 import { weatherProvider } from './weather.js';
+import { attendanceProvider } from './attendance.js';
 
 // The active registry. Order only affects merge precedence on (disallowed)
 // duplicate property names; declaredProperties() rejects those outright.
-export const PROVIDERS = [clockProvider, weatherProvider];
+export const PROVIDERS = [clockProvider, weatherProvider, attendanceProvider];
 
 // The union of all declared property names. Throws if two providers declare the
 // same name — a configuration error that would make one silently shadow another.

@@ -46,8 +46,9 @@ async function resolveUser(env, id) {
   return user;
 }
 
-// Returns the list of present people (those who reacted with the check-in emoji).
-export async function getPresent(env, now) {
+// The Slack ids of everyone who reacted to today's check-in with the check-in
+// emoji. One API call, no name resolution.
+async function getCheckinReactorIds(env, now) {
   const record = await postCheckin(env, now); // also the lazy fallback if cron missed
   const url = `${SLACK_API}/reactions.get?channel=${record.channel}&timestamp=${record.ts}`;
   const res = await fetch(url, { headers: { Authorization: `Bearer ${env.SLACK_BOT_TOKEN}` } });
@@ -56,9 +57,19 @@ export async function getPresent(env, now) {
 
   const reactions = (data.message && data.message.reactions) || [];
   const match = reactions.find((r) => r.name === env.CHECKIN_EMOJI);
-  const ids = match ? match.users : [];
+  return match ? match.users : [];
+}
 
+// Returns the list of present people (those who reacted with the check-in emoji).
+export async function getPresent(env, now) {
+  const ids = await getCheckinReactorIds(env, now);
   const users = [];
   for (const id of ids) users.push(await resolveUser(env, id));
   return users;
+}
+
+// How many people reacted. Skips the per-user users.info lookups getPresent needs,
+// so a headcount costs one Slack request instead of 1 + N.
+export async function countCheckinReactors(env, now) {
+  return (await getCheckinReactorIds(env, now)).length;
 }
