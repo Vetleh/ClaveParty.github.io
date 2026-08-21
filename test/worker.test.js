@@ -52,6 +52,39 @@ describe('worker.fetch', () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ raining: true });
   });
+
+  it('serves /api/activities as a filtered pool plus the context it used', async () => {
+    vi.spyOn(console, 'info').mockImplementation(() => {});
+    globalThis.fetch = vi.fn(async (url) => {
+      const details = String(url).includes('/nowcast/')
+        ? { precipitation_rate: 0 }
+        : { air_temperature: 21, cloud_area_fraction: 5 };
+      return { ok: true, status: 200, json: async () => ({ properties: { timeseries: [{ data: { instant: { details } } }] } }) };
+    });
+
+    const res = await worker.fetch(new Request('https://x/api/activities'), baseEnv());
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.context.raining).toBe(false);
+    expect(body.context.temperature).toBe(21);
+    expect(Array.isArray(body.activities)).toBe(true);
+    expect(body.activities.length).toBeGreaterThan(0);
+    for (const a of body.activities) {
+      expect(typeof a.id).toBe('string');
+      expect(typeof a.tekst).toBe('string');
+    }
+  });
+
+  it('/api/activities still returns a non-empty pool when met.no is down (fail closed)', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    globalThis.fetch = vi.fn(async () => { throw new Error('down'); });
+    const res = await worker.fetch(new Request('https://x/api/activities'), baseEnv());
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.context.raining).toBe(true); // unknown rain treated as rain
+    expect(body.activities.length).toBeGreaterThan(0);
+  });
 });
 
 describe('worker.scheduled', () => {

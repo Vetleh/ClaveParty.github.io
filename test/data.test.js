@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { parse, tokenize } from '../src/query.js';
+import { declaredProperties } from '../src/providers.js';
 
 const read = (p) => JSON.parse(readFileSync(new URL(p, import.meta.url)));
 
@@ -20,9 +22,13 @@ describe('activities.json', () => {
     const ids = data.aktiviteter.map((a) => a.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
-  it('gives every activity a boolean ute flag (the rain filter depends on it)', () => {
+  it('gives every betingelse a query that parses and uses only declared properties', () => {
+    const allowed = declaredProperties();
     for (const a of data.aktiviteter) {
-      expect(typeof a.ute).toBe('boolean');
+      if (a.betingelse === undefined) continue;
+      expect(typeof a.betingelse).toBe('string');
+      // Throws on a syntax error or an undeclared property, naming the activity.
+      expect(() => parse(tokenize(a.betingelse), allowed), `${a.id}: ${a.betingelse}`).not.toThrow();
     }
   });
 });

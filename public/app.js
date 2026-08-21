@@ -1,6 +1,5 @@
-import { pick, pickPerson, seasonalActivities, filterByWeather } from './selection.js';
+import { pick, pickPerson } from './selection.js';
 import { dueSpin, nextSpin, duePrefetch } from './scheduler.js';
-import { localMonth } from './datetime.js';
 import { wedgeAngles, rotationFor } from './wheel-geometry.js';
 
 const TEST = new URLSearchParams(location.search).has('test');
@@ -14,7 +13,7 @@ const WHEEL_COLORS = ['#ffd23f', '#ff6b6b', '#4ecdc4', '#a06bff'];
 const LABEL_HIDE_THRESHOLD = 12; // above this many people, show avatars only
 const SPIN_SECONDS_DEFAULT = 5;
 const SPIN_TURNS_DEFAULT = 5;
-const WEATHER_LEAD_MINUTES = 1; // prefetch the rain check this many minutes before a spin
+const PREFETCH_LEAD_MINUTES = 1; // prefetch the eligible pool this many minutes before a spin
 
 const els = {
   state: document.getElementById('state'),
@@ -33,9 +32,8 @@ const els = {
 };
 
 let config;
-let activities;
 let round = null; // { activity, present, excluded:Set, current, spinKey, rotation }
-let weatherPrefetch = null; // { spinKey, raining } — rain check stashed for the upcoming spin
+let poolPrefetch = null; // { spinKey, pool } — eligible activities stashed for the upcoming spin
 
 const setState = (name) => { els.state.dataset.state = name; };
 
@@ -65,19 +63,17 @@ async function fetchPresent() {
   }
 }
 
-// Best-effort rain check via the worker (which proxies met.no). Fail-closed:
-// any error, or anything but an explicit `false`, is treated as raining so we
-// never send people outside on a maybe-wet day.
-async function fetchRaining() {
+// The activities eligible for a spin right now. The worker assembles the
+// context (date/time, weather, …) and evaluates each activity's condition, so
+// the screen just picks from what it returns. Returns [] if the worker can't be
+// reached; startSpin then ends the round gracefully rather than picking nothing.
+async function fetchActivities() {
   try {
-    const res = await fetch('/api/weather');
+    const res = await fetch('/api/activities');
     const data = await res.json();
-    // Fail closed: only an explicit `false` counts as "confirmed dry". Anything
-    // else — true, or a missing/garbage `raining` field — is treated as rain, so
-    // an unexpected response can never send people outside on a wet day.
-    return data.raining !== false;
+    return Array.isArray(data.activities) ? data.activities : [];
   } catch {
-    return true; // couldn't reach the worker at all — assume rain
+    return [];
   }
 }
 
@@ -217,12 +213,29 @@ function endRound(messageText, spinKey) {
 }
 
 async function startSpin(spinKey) {
+  // Claim the round synchronously so a later tick can't start a second spin
+  // while we await below.
   setState('announcing');
+  let remaining = config.countdownSeconds;
+  els.countdown.textContent = remaining;
+
+  // Settle the activity pool BEFORE the audible countdown. The worker always
+  // returns a non-empty pool, so an empty one means we couldn't reach it —
+  // transient, so drop back to idle WITHOUT marking this spin as run and let a
+  // later tick retry inside the grace window. Doing this first means an outage
+  // costs no announcement and never spends the day's spin on a network blip.
+  // (A stashed pool matches only this spinKey; a TEST spin has none and refetches.)
+  let pool = (poolPrefetch && poolPrefetch.spinKey === spinKey) ? poolPrefetch.pool : null;
+  if (!pool || pool.length === 0) pool = await fetchActivities();
+  if (pool.length === 0) {
+    round = null;
+    setState('idle');
+    return;
+  }
+
   els.sound.loop = true;
   els.sound.currentTime = 0;
   els.sound.play().catch(() => {}); // autoplay may be blocked; ignore
-  let remaining = config.countdownSeconds;
-  els.countdown.textContent = remaining;
   await new Promise((resolve) => {
     const iv = setInterval(() => {
       remaining -= 1;
@@ -239,15 +252,6 @@ async function startSpin(spinKey) {
     return;
   }
 
-  // Use the reading stashed ~1 min ago for this spin; fall back to a live check
-  // for a manual TEST spin (no spinKey) or if the prefetch window was missed.
-  const raining = (weatherPrefetch && weatherPrefetch.spinKey === spinKey)
-    ? weatherPrefetch.raining
-    : await fetchRaining();
-
-  const seasonal = seasonalActivities(activities, localMonth(new Date(), config.timezone));
-  const dry = filterByWeather(seasonal, raining);
-  const pool = dry.length ? dry : seasonal; // never leave an empty pool
   const { person, activity } = pick(present, pool, getLastActivity(), []);
   round = { activity, present, excluded: new Set(), current: person, spinKey, rotation: 0 };
   setState('spinning');
@@ -287,14 +291,14 @@ function tick() {
   const now = new Date();
   updateNextDraw();
 
-  // Prefetch the rain check ~1 min before a spin so the spin uses a ready
-  // reading. Guarded by spinKey so it fires once, not on every tick in that minute.
-  const weatherLead = config.weatherLeadMinutes || WEATHER_LEAD_MINUTES;
-  const prefetchKey = duePrefetch(now, config.spinTimes, config.timezone, weatherLead);
-  if (prefetchKey && (!weatherPrefetch || weatherPrefetch.spinKey !== prefetchKey)) {
-    weatherPrefetch = { spinKey: prefetchKey, raining: true }; // fail-closed until the fetch resolves
-    fetchRaining().then((r) => {
-      if (weatherPrefetch && weatherPrefetch.spinKey === prefetchKey) weatherPrefetch.raining = r;
+  // Prefetch the eligible pool ~1 min before a spin so the spin uses a ready
+  // list. Guarded by spinKey so it fires once, not on every tick in that minute.
+  const prefetchLead = config.weatherLeadMinutes || PREFETCH_LEAD_MINUTES;
+  const prefetchKey = duePrefetch(now, config.spinTimes, config.timezone, prefetchLead);
+  if (prefetchKey && (!poolPrefetch || poolPrefetch.spinKey !== prefetchKey)) {
+    poolPrefetch = { spinKey: prefetchKey, pool: [] }; // empty until the fetch resolves
+    fetchActivities().then((pool) => {
+      if (poolPrefetch && poolPrefetch.spinKey === prefetchKey) poolPrefetch.pool = pool;
     });
   }
 
@@ -305,7 +309,6 @@ function tick() {
 
 async function main() {
   config = await (await fetch('/config.json')).json();
-  activities = (await (await fetch('/activities.json')).json()).aktiviteter;
   els.sound.src = config.soundFile;
   setState('idle');
   updateNextDraw();

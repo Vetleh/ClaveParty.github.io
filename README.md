@@ -13,13 +13,43 @@ employee to do it. Presence comes from two sources, merged:
   pick a present person + activity.
 - The chosen person taps **I'm on it!** or **Skip / can't right now** (re-picks a
   different person, same activity).
-- About a minute before each spin the screen checks whether it's raining (met.no
-  nowcast, proxied through the Worker). If it is, outdoor activities (`"ute": true`
-  in `activities.json`) are dropped from that spin. If the weather can't be reached,
-  it fails closed (assumes rain) so nobody's sent outside on a maybe-wet day.
+- About a minute before each spin the screen asks the Worker which activities are
+  eligible (`/api/activities`). The Worker gathers the current conditions — date/time
+  plus weather from met.no — and keeps only the activities whose `betingelse`
+  condition holds. Anything unknown (met.no unreachable, say) makes a condition
+  false, so a rain-dependent activity drops out rather than sending people out on a
+  maybe-wet day.
 
 ## Edit the activities
 Edit `public/activities.json` and push to `main`. Auto-deploys in seconds.
+
+Each activity has an `id`, a `kategori` (shown on screen), the `tekst` itself, and an
+optional `betingelse` — a condition that must hold for the activity to be eligible.
+Leave `betingelse` out and the activity always applies.
+
+```jsonc
+{ "id": "sommer-01", "kategori": "Sommerspesial", "tekst": "Ta med gjengen ut i sola…",
+  "betingelse": "month gte 6 and month lte 7 and raining eq false" }
+```
+
+Properties you can use: `month` (1-12), `hour` (0-23), `weekday` (1=Mon…7=Sun),
+`dateISO`, `raining`, `precipitationRate`, `temperature` (°C), `cloudCover` (%),
+`sunny`. Operators: `eq neq gt gte lt lte`, combined with `and` / `or` / `not` and
+parentheses.
+
+Two rules worth knowing:
+- **Write positive requirements.** An unknown value makes a comparison false, so
+  `raining eq false` correctly drops an outdoor activity when the weather is unknown.
+  The equivalent-looking `not (raining eq true)` would *include* it instead.
+- **Ordering needs numbers.** `gt`/`lt` on a string (e.g. `dateISO`) is always false;
+  use `eq`/`neq` there.
+
+`npm test` validates every `betingelse` — it fails on a syntax error or a misspelled
+property, so a typo can't reach the screen.
+
+New data source? Write a provider module under `src/` (see `src/clock.js` for the
+smallest example) and list it in `src/providers.js`; its properties become
+available to every condition with no change to the query engine.
 
 ## Configure timing / behavior
 Edit `public/config.json`: `spinTimes`, `timezone`, `countdownSeconds`, `graceMinutes`,
@@ -27,7 +57,8 @@ Edit `public/config.json`: `spinTimes`, `timezone`, `countdownSeconds`, `graceMi
 
 ## Worker settings (Cloudflare)
 - `wrangler.jsonc` → `vars`: `SLACK_CHANNEL`, `CHECKIN_EMOJI`, `CHECKIN_MESSAGE`, `TIMEZONE`,
-  `WEATHER_LAT`/`WEATHER_LON` (location for the rain check; defaults to Oslo).
+  `WEATHER_LAT`/`WEATHER_LON` (location for the weather lookup; defaults to Oslo),
+  `WEATHER_SUNNY_MAX_CLOUD` (cloud cover % below which `sunny` is true; defaults to 20).
 - `triggers.crons`: the morning check-in post time (UTC).
 - Secret: `SLACK_BOT_TOKEN` (`npx wrangler secret put SLACK_BOT_TOKEN`).
 
