@@ -36,9 +36,9 @@ export function nextSpin(now, spinTimes, ranKeys, timeZone, graceMinutes = 15) {
   return { time: times[0], today: false };
 }
 
-// Returns the spin key whose weather should be prefetched now — i.e. exactly
-// `leadMinutes` before its scheduled time — or null. Same key format as dueSpin
-// so a stashed reading can be matched to the spin it belongs to. Minute
+// Returns the spin key whose activity pool should be prefetched now — i.e.
+// exactly `leadMinutes` before its scheduled time — or null. Same key format as
+// dueSpin so a stashed pool can be matched to the spin it belongs to. Minute
 // granularity, like dueSpin; app.js dedupes repeat ticks within that minute.
 export function duePrefetch(now, spinTimes, timeZone, leadMinutes = 1) {
   const date = localDateISO(now, timeZone);

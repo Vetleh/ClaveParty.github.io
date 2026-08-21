@@ -293,7 +293,7 @@ function tick() {
 
   // Prefetch the eligible pool ~1 min before a spin so the spin uses a ready
   // list. Guarded by spinKey so it fires once, not on every tick in that minute.
-  const prefetchLead = config.weatherLeadMinutes || PREFETCH_LEAD_MINUTES;
+  const prefetchLead = config.prefetchLeadMinutes || PREFETCH_LEAD_MINUTES;
   const prefetchKey = duePrefetch(now, config.spinTimes, config.timezone, prefetchLead);
   if (prefetchKey && (!poolPrefetch || poolPrefetch.spinKey !== prefetchKey)) {
     poolPrefetch = { spinKey: prefetchKey, pool: [] }; // empty until the fetch resolves
