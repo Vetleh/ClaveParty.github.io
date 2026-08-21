@@ -39,8 +39,13 @@ during the short window it is eligible. Everything else is left at the default.
 
 Properties you can use: `month` (1-12), `hour` (0-23), `weekday` (1=Mon…7=Sun),
 `dateISO`, `raining`, `precipitationRate`, `temperature` (°C), `cloudCover` (%),
-`sunny`. Operators: `eq neq gt gte lt lte`, combined with `and` / `or` / `not` and
-parentheses.
+`sunny`, `attending`. Operators: `eq neq gt gte lt lte`, combined with `and` / `or`
+/ `not` and parentheses.
+
+`attending` is how many people reacted to today's Slack check-in message — the
+sign-ups, not the devices seen on the office network. Use it to gate activities
+that need a crowd: `attending gte 4`. If Slack can't be reached the value is
+unknown, so such an activity drops out rather than being suggested to two people.
 
 Two rules worth knowing:
 - **Write positive requirements.** An unknown value makes a comparison false, so

@@ -43,10 +43,10 @@ describe('declaredProperties', () => {
     expect(() => declaredProperties(providers)).toThrow(/dup/);
   });
 
-  it('the real registry exposes clock and weather properties without collisions', () => {
+  it('the real registry exposes clock, weather, and attendance properties without collisions', () => {
     const props = declaredProperties(PROVIDERS);
     expect(props).toEqual(expect.any(Set));
-    ['month', 'hour', 'weekday', 'raining', 'temperature', 'sunny'].forEach((p) => {
+    ['month', 'hour', 'weekday', 'raining', 'temperature', 'sunny', 'attending'].forEach((p) => {
       expect(props.has(p)).toBe(true);
     });
   });

@@ -55,18 +55,26 @@ describe('worker.fetch', () => {
 
   it('serves /api/activities as a filtered pool plus the context it used', async () => {
     vi.spyOn(console, 'info').mockImplementation(() => {});
+    const env = baseEnv();
+    await env.KV.put(`checkin:${localDateISO(new Date(), 'Europe/Oslo')}`, JSON.stringify({ channel: 'C123', ts: '1.2' }));
     globalThis.fetch = vi.fn(async (url) => {
+      if (String(url).includes('reactions.get')) {
+        return { json: async () => ({ ok: true, message: { reactions: [
+          { name: 'white_check_mark', users: ['U1', 'U2'] },
+        ] } }) };
+      }
       const details = String(url).includes('/nowcast/')
         ? { precipitation_rate: 0 }
         : { air_temperature: 21, cloud_area_fraction: 5 };
       return { ok: true, status: 200, json: async () => ({ properties: { timeseries: [{ data: { instant: { details } } }] } }) };
     });
 
-    const res = await worker.fetch(new Request('https://x/api/activities'), baseEnv());
+    const res = await worker.fetch(new Request('https://x/api/activities'), env);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.context.raining).toBe(false);
     expect(body.context.temperature).toBe(21);
+    expect(body.context.attending).toBe(2);
     expect(Array.isArray(body.activities)).toBe(true);
     expect(body.activities.length).toBeGreaterThan(0);
     for (const a of body.activities) {
@@ -83,6 +91,7 @@ describe('worker.fetch', () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.context.raining).toBe(true); // unknown rain treated as rain
+    expect('attending' in body.context).toBe(false); // unknown, so `attending gte n` is false
     expect(body.activities.length).toBeGreaterThan(0);
   });
 });

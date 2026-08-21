@@ -4,7 +4,7 @@
     "id": "unik id",
     "kategori": "gruppering som vises på skjermen",
     "tekst": "det som vises på skjermen",
-    "betingelse": "valgfritt spørrespråk-uttrykk som må være sant for at aktiviteten er aktuell; utelat feltet for aktiviteter som alltid gjelder. Egenskaper: month (1-12), hour (0-23), weekday (1=man..7=søn), dateISO, raining, precipitationRate, temperature (°C), cloudCover (%), sunny. Operatorer: eq neq gt gte lt lte, and or not, og parenteser. Skriv positive krav (raining eq false), ikke not (raining eq true) — ukjente verdier gjør et krav usant (fail-closed).",
+    "betingelse": "valgfritt spørrespråk-uttrykk som må være sant for at aktiviteten er aktuell; utelat feltet for aktiviteter som alltid gjelder. Egenskaper: month (1-12), hour (0-23), weekday (1=man..7=søn), dateISO, raining, precipitationRate, temperature (°C), cloudCover (%), sunny, attending (antall som har reagert på Slack-meldingen). Operatorer: eq neq gt gte lt lte, and or not, og parenteser. Skriv positive krav (raining eq false), ikke not (raining eq true) — ukjente verdier gjør et krav usant (fail-closed).",
     "vekting": "valgfri relativ sannsynlighet blant de aktuelle aktivitetene; positivt tall, utelatt = 1. vekting 5 betyr fem ganger så sannsynlig som en aktivitet uten vekting."
   },
   "aktiviteter": [
